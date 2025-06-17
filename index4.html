@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<title>Quiz Kinh Tế Chính Trị - Chương 5 - KINH TẾ THỊ TRƯỜNG ĐỊNH HƯỚNG XÃ HỘI CHỦ NGHĨA VÀ CÁC QUAN HỆ LỢI ÍCH KINH TẾ</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+    background: #400848; /* tím pastel */
+    color: #222;
+}
+#quiz-container {
+    max-width: 600px;
+    margin: auto;
+    background: #b753c6;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+    outline: none;
+}
+#question {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #222;
+}
+.answer-option {
+    color: #000000 !important;
+    padding: 15px 20px;
+    margin-bottom: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 1em;
+    font-weight: 500;
+    border: 2px solid transparent;
+    transition: background-color 0.3s, border-color 0.3s;
+    display: flex;
+    align-items: center;
+}
+.answer-option:hover {
+    filter: brightness(0.95);
+}
+.answer-option:focus {
+    outline: none;
+    border-color: #ffcc00;
+    box-shadow: 0 0 8px #ffcc00;
+}
+.answer-A { background-color: #D0E8FF; }
+.answer-B { background-color: #D4EDDA; }
+.answer-C { background-color: #FFE5B4; }
+.answer-D { background-color: #F8D7DA; }
+.correct {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border-color: #388e3c !important;
+}
+.wrong {
+    background-color: #f44336 !important;
+    color: white !important;
+    border-color: #d32f2f !important;
+}
+#progress {
+    margin-top: 20px;
+    font-size: 0.95em;
+    color: #555;
+    font-style: italic;
+}
+#result {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #4CAF50;
+    text-align: center;
+    margin-top: 35px;
+}
+.answer-label {
+    font-weight: 700;
+    margin-right: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div id="quiz-container" tabindex="0" aria-live="polite" aria-atomic="true" role="region">
+<div id="question"></div>
+<div id="answers"></div>
+<div id="progress"></div>
+<div id="result" aria-live="assertive"></div>
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "Điền từ ngữ thích hợp vào chỗ chấm: Kinh tế thị trường định hướng xã hội chủ nghĩa là nền kinh tế vận hành theo các ...(1)... của thị trường, đồng thời góp phần hướng tới từng bước xác lập một xã hội mà ở đó dân giàu, nước mạnh, ..(2).., văn minh; có sự điều tiết của Nhà nước do Đảng Cộng sản Việt Nam ...(3)...",
+    answers: [
+      "(1) nguyên tắc; (2) công bằng, dân chủ; (3) lãnh đạo",
+      "(1) quy luật; (2) công bằng, dân chủ; (3) quản lí",
+      "(1) quy luật; (2) dân chủ, công bằng; (3) lãnh đạo",
+      "(1) nguyên tắc; (2) dân chủ, công bằng; (3) lãnh đạo"
+    ],
+    correct: "(1) quy luật; (2) dân chủ, công bằng; (3) lãnh đạo"
+  },
+  {
+    question: "Nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam với sự hoạt động kinh tế của các chủ thể, hướng tới góp phần xác lập một hệ giá trị toàn diện bao gồm:",
+    answers: [
+      "dân giàu, nước mạnh, dân chủ, công bằng, văn minh.",
+      "phát triển, bình đẳng, dân chủ, đoàn kết, văn minh.",
+      "dân giàu, tự chủ, tự do, công bằng, hiệu quả.",
+      "hiệu quả, chất lượng, năng suất, tiến bộ, văn minh."
+    ],
+    correct: "dân giàu, nước mạnh, dân chủ, công bằng, văn minh."
+  },
+  {
+    question: "Khẳng định nào dưới đây là đúng khi nói về đặc trưng của nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam? Nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam",
+    answers: [
+      "mang các đặc trưng chung vốn có của kinh tế thị trường nói chung, không bao hàm các đặc trưng riêng của Việt Nam.",
+      "vừa bao hàm đầy đủ các đặc trưng chung vốn có của kinh tế thị trường nói chung vừa có những đặc trưng riêng của Việt Nam.",
+      "không bao hàm đầy đủ các đặc trưng chung vốn có của kinh tế thị trường mà có những đặc trưng riêng của Việt Nam.",
+      "chỉ bao hàm các đặc trưng của nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam."
+    ],
+    correct: "vừa bao hàm đầy đủ các đặc trưng chung vốn có của kinh tế thị trường nói chung vừa có những đặc trưng riêng của Việt Nam."
+  },
+  {
+    question: "Đảng ta khẳng định: Kinh tế thị trường định hướng xã hội chủ nghĩa chủ nghĩa ở Việt Nam. là mô hình kinh tế tổng quát của thời kì quá độ lên chủ nghĩa xã hội ở nước ta, tại Đại hội đại biểu toàn quốc lần thứ mấy?",
+    answers: [
+      "Đại hội đại biểu toàn quốc lần thứ VII",
+      "Đại hội đại biểu toàn quốc lần thứ IX",
+      "Đại hội đại biểu toàn quốc lần thứ X",
+      "Đại hội đại biểu toàn quốc lần thứ XI"
+    ],
+    correct: "Đại hội đại biểu toàn quốc lần thứ IX"
+  },
+  {
+    question: "Phát triển kinh tế thị trường định hướng xã hội chủ nghĩa là tất yếu ở Việt Nam, không xuất phát từ những lí do cơ bản nào dưới đây?",
+    answers: [
+      "Sự phù hợp với xu hướng phát triển khách quan của Việt Nam trong bối cảnh thế giới hiện nay",
+      "Tính ưu việt của kinh tế thị trường trong thúc đẩy phát triển Việt Nam theo định hướng xã hội chủ nghĩa",
+      "Sự phù hợp với nguyện vọng mong muốn dân giàu, nước mạnh, dân chủ, công bằng, văn minh của người dân Việt Nam",
+      "Xu hướng tự khắc phục các thất bại và khuyết tật của thị trường, không cần sự can thiệp của Nhà nước"
+    ],
+    correct: "Xu hướng tự khắc phục các thất bại và khuyết tật của thị trường, không cần sự can thiệp của Nhà nước"
+  },
+  {
+    question: "Kinh tế thị trường định hướng xã hội chủ nghĩa hướng tới phát triển lực lượng sản xuất, xây dựng cơ sở vật chất – kĩ thuật của chủ nghĩa xã hội; nâng cao đời sống nhân dân, thực hiện “dân giàu, nước mạnh, dân chủ, công bằng, văn minh” là nội dung thể hiện đặc trưng nào của kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam?",
+    answers: [
+      "Về quan hệ sở hữu",
+      "Về quan hệ quản lí",
+      "Về mục tiêu",
+      "Về quan hệ phân phối"
+    ],
+    correct: "Về mục tiêu"
+  },
+  {
+    question: "Quan hệ giữa con người với con người trong quá trình sản xuất và tái sản xuất xã hội trên cơ sở chiếm hữu nguồn lực của quá trình sản xuất và kết quả lao động tương ứng của quá trình sản xuất hay tái sản xuất ấy trong một điều kiện lịch sử nhất định là nội dung thể hiện khái niệm nào?",
+    answers: [
+      "Sở hữu",
+      "Chiếm hữu",
+      "Tư hữu",
+      "Công hữu"
+    ],
+    correct: "Sở hữu"
+  },
+  {
+    question: "Khi đề cập đến sở hữu, hàm ý trong đó không bao gồm yếu tố nào dưới đây?",
+    answers: [
+      "Chủ thể sở hữu",
+      "Đối tượng sở hữu",
+      "Tính chất sở hữu",
+      "Lợi ích từ đối tượng sở hữu"
+    ],
+    correct: "Tính chất sở hữu"
+  },
+  {
+    question: "Sở hữu chịu sự quy định trực tiếp của yếu tố nào dưới đây?",
+    answers: [
+      "Sự phát triển của kiến trúc thượng tầng",
+      "Trình độ của lực lượng sản xuất",
+      "Trình độ của quan hệ sản xuất",
+      "Sự phù hợp của quan hệ sản xuất"
+    ],
+    correct: "Trình độ của lực lượng sản xuất"
+  },
+  {
+    question: "Sở hữu bao gồm những nội dung nào?",
+    answers: [
+      "Kinh tế và pháp lí",
+      "Chủ thể sở hữu và đối tượng sở hữu",
+      "Kinh tế và quản lí",
+      "Chủ thể sở hữu và pháp lí"
+    ],
+    correct: "Kinh tế và pháp lí"
+  },
+  {
+    question: "Kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam là nền kinh tế",
+    answers: [
+      "có nhiều hình thức sở hữu, nhiều thành phần kinh tế.",
+      "có một hình thức sở hữu, nhiều thành phần kinh tế.",
+      "có nhiều hình thức sở hữu, một thành phần kinh tế.",
+      "có hai hình thức sở hữu, hai thành phần kinh tế."
+    ],
+    correct: "có nhiều hình thức sở hữu, nhiều thành phần kinh tế."
+  },
+  {
+    question: "Sở hữu phản ánh việc chiếm hữu các yếu tố nào dưới đây?",
+    answers: [
+      "Quá trình sản xuất và kết quả của lao động",
+      "Quá trình trao đổi và kết quả của lao động",
+      "Các nguồn lực của sản xuất và kết quả của lao động",
+      "Các nguồn lực đầu vào và tổ chức quản lí sản xuất"
+    ],
+    correct: "Các nguồn lực của sản xuất và kết quả của lao động"
+  },
+  {
+    question: "Các thành phần kinh tế dựa trên chế độ công hữu là",
+    answers: [
+      "kinh tế nhà nước và kinh tế tư nhân.",
+      "kinh tế nhà nước và kinh tế tập thể.",
+      "kinh tế tư nhân và kinh tế tập thể.",
+      "kinh tế tư nhân và kinh tế có vốn đầu tư nước ngoài."
+    ],
+    correct: "kinh tế nhà nước và kinh tế tập thể."
+  },
+  {
+    question: "Thành phần kinh tế tư nhân dựa trên chế độ sở hữu nào?",
+    answers: [
+      "Công hữu",
+      "Công cộng",
+      "Tư nhân",
+      "Tập thể"
+    ],
+    correct: "Tư nhân"
+  },
+  {
+    question: "Trong nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam, thành phần kinh tế nào dưới đây giữ vai trò chủ đạo?",
+    answers: [
+      "Kinh tế tập thể",
+      "Kinh tế nhà nước",
+      "Kinh tế tư nhân",
+      "Kinh tế có vốn đầu tư nước ngoài"
+    ],
+    correct: "Kinh tế nhà nước"
+  },
+  {
+    question: "Điền từ ngữ thích hợp điền vào chỗ chấm: Trong nền kinh tế thị trường định hướng xã hội chủ nghĩa, ...(1)... đóng vai trò chủ đạo, cùng với ...(2)... ngày càng trở thành nền tảng vững chắc của nền kinh tế quốc dân.",
+    answers: [
+      "(1) kinh tế nhà nước; (2) kinh tế tư nhân",
+      "(1) kinh tế nhà nước; (2) kinh tế tập thể",
+      "(1) kinh tế tư nhân; (2) kinh tế tập thể",
+      "(1) kinh tế tư nhân; (2) kinh tế nhà nước"
+    ],
+    correct: "(1) kinh tế nhà nước; (2) kinh tế tập thể"
+  },
+  {
+    question: "Trong nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam, thành phần kinh tế nào là một động lực quan trọng của nền kinh tế quốc dân?",
+    answers: [
+      "Kinh tế tư nhân",
+      "Kinh tế nhà nước",
+      "Kinh tế có vốn đầu tư nước ngoài",
+      "Kinh tế tập thể"
+    ],
+    correct: "Kinh tế tư nhân"
+  },
+  {
+    question: "Khẳng định nào dưới đây là sai khi nói về vai trò của kinh tế nhà nước?",
+    answers: [
+      "Kinh tế nhà nước là đòn bẩy để thúc đẩy tăng trưởng nhanh, bền vững và giải quyết các vấn đề xã hội.",
+      "Kinh tế nhà nước đứng độc lập, tách rời với toàn bộ nền kinh tế và các thành phần kinh tế khác.",
+      "Kinh tế nhà nước mở đường, hướng dẫn, hỗ trợ các thành phần kinh tế khác cùng phát triển.",
+      "Kinh tế nhà nước làm lực lượng vật chất để Nhà nước thực hiện chức năng điều tiết, quản lí nền kinh tế."
+    ],
+    correct: "Kinh tế nhà nước đứng độc lập, tách rời với toàn bộ nền kinh tế và các thành phần kinh tế khác."
+  },
+  {
+    question: "Nhận định nào dưới đây là sai khi nói về vị trí, quan hệ giữa các thành phần kinh tế",
+    answers: [
+      "Mỗi thành phần kinh tế đầu là một bộ phận cấu thành của nền kinh tế quốc dân.",
+      "Các thành phần kinh tế cũng tồn tại và phát triển, đều bình đẳng trước pháp luật.",
+      "Các chủ thể thuộc các thành phần kinh tế bình đẳng, hợp tác, cạnh tranh cùng phát triển theo pháp luật.",
+      "Các thành phần kinh tế tách biệt, đối lập nhau và không bình đẳng trước pháp luật"
+    ],
+    correct: "Các thành phần kinh tế tách biệt, đối lập nhau và không bình đẳng trước pháp luật"
+  },
+  {
+    question: "Nhà nước quản lí và thực hành cơ chế quản lí là: Nhà nước pháp quyền xã hội chủ nghĩa của nhân dân, do nhân dân, vì nhân dân dưới sự lãnh đạo của Đảng Cộng sản, chịu sự làm chủ và giám sát của nhân dân là nội dung thể hiện đặc trưng nào của nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam?",
+    answers: [
+      "Về mục tiêu",
+      "Về quan hệ sở hữu và thành phần kinh tế",
+      "Về quan hệ quản lí nền kinh tế",
+      "Về quan hệ phân phối"
+    ],
+    correct: "Về quan hệ quản lí nền kinh tế"
+  },
+  {
+    question: "Trong điều kiện nền kinh tế thị trường hiện nay, Nhà nước thông qua cơ chế, chính sách và các công cụ quản lí kinh tế để tác động vào thị trường không nhằm mục đích nào dưới đây?",
+    answers: [
+      "Bảo đảm tính bền vững của các cân đối kinh tế vĩ mô",
+      "Khắc phục những khuyết tật của kinh tế thị trưởng",
+      "Điều tiết nền kinh tế theo cơ chế kế hoạch hoá tập trung",
+      "Hỗ trợ thị trường trong nước khi cần thiết"
+    ],
+    correct: "Điều tiết nền kinh tế theo cơ chế kế hoạch hoá tập trung"
+  },
+  {
+    question: "Đảng Cộng sản Việt Nam lãnh đạo nền kinh tế thị trường định hướng xã hội chủ nghĩa thông qua",
+    answers: [
+      "pháp luật, chiến lược, kế hoạch và các chủ trương, quyết sách lớn.",
+      "cương lĩnh, đường lối phát triển kinh tế – xã hội và các chủ trương, quyết sách lớn.",
+      "cương lĩnh, pháp luật, chiến lược, kế hoạch và các chủ trương, quyết sách lớn.",
+      "pháp luật, chiến lược, quy hoạch và cơ chế, chính sách và các công cụ kinh tế."
+    ],
+    correct: "cương lĩnh, đường lối phát triển kinh tế – xã hội và các chủ trương, quyết sách lớn."
+  },
+  {
+    question: "Trong nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam, việc phân phối kết quả làm ra (đầu ra) chủ yếu theo",
+    answers: [
+      "kết quả lao động, hiệu quả kinh tế, mức độ đóng góp vốn cùng các nguồn lực khác và thông qua hệ thống an sinh xã hội, phúc lợi xã hội.",
+      "nguồn lực đầu vào, cơ hội phát triển của các chủ thể và thông qua hệ thống an sinh xã hội, phúc lợi xã hội.",
+      "hiệu quả kinh tế, tiếp cận và sử dụng các cơ hội và điều kiện phát triển của mọi chủ thể kinh tế.",
+      "mức độ đóng góp vốn, các nguồn lực đầu vào cùng các nguồn lực khác và thông qua hệ thống an sinh xã hội, phúc lợi xã hội."
+    ],
+    correct: "kết quả lao động, hiệu quả kinh tế, mức độ đóng góp vốn cùng các nguồn lực khác và thông qua hệ thống an sinh xã hội, phúc lợi xã hội."
+  },
+  {
+    question: "Quan hệ phân phối bị chi phối và quyết định bởi",
+    answers: [
+      "quan hệ giữa gắn tăng trưởng kinh tế với công bằng xã hội.",
+      "quan hệ quản li nền kinh tế.",
+      "quan hệ sản xuất và trao đổi.",
+      "quan hệ sở hữu về tư liệu sản xuất."
+    ],
+    correct: "quan hệ sở hữu về tư liệu sản xuất."
+  },
+  {
+    question: "Nền kinh tế thị trường định hướng xã hội chủ nghĩa thực hiện nhiều hình thức phân phối khác nhau, thực chất là",
+    answers: [
+      "thực hiện các lợi ích kinh tế.",
+      "điều chỉnh quan hệ sở hữu.",
+      "thực hiện trách nhiệm kinh tế.",
+      "thực hiện lợi ích xã hội."
+    ],
+    correct: "thực hiện các lợi ích kinh tế."
+  },
+  {
+    question: "Nội dung nào dưới đây không phải là tác dụng của việc thực hiện nhiều hình thức phân phối ở nước ta?",
+    answers: [
+      "Thúc đẩy tăng trưởng kinh tế và tiến bộ xã hội",
+      "Góp phần cải thiện và nâng cao đời sống cho nhân dân",
+      "Bảo đảm công bằng xã hội trong sử dụng các nguồn lực kinh",
+      "Thực hiện lợi ích nhóm trong sử dụng các nguồn lực kinh tế"
+    ],
+    correct: "Thực hiện lợi ích nhóm trong sử dụng các nguồn lực kinh tế"
+  },
+  {
+    question: "Những hình thức phân phối nào phản ánh định hướng xã hội chủ nghĩa của nền kinh tế thị trường ở Việt Nam?",
+    answers: [
+      "Phân phối theo lao động và hiệu quả kinh tế, phân phối theo phúc lợi",
+      "Phân phối theo mức độ đóng góp vốn và phân phối các yếu tố sản xuất",
+      "Phân phối theo lao động, theo mức độ đóng góp vốn và phân phối theo phúc lợi",
+      "Phân phối theo quy mô vốn và hiệu quả kinh tế, phân phối theo phúc lợi"
+    ],
+    correct: "Phân phối theo lao động và hiệu quả kinh tế, phân phối theo phúc lợi"
+  },
+  {
+    question: "Đặc trưng nào phản ánh thuộc tỉnh quan trọng mang tính định hướng xã hội chủ nghĩa của nền kinh tế thị trường ở Việt Nam?",
+    answers: [
+      "Về mục tiêu",
+      "Về quan hệ giữa gắn tăng trưởng kinh tế với công bằng xã hội",
+      "Về quan hệ phân phối",
+      "Về quan hệ quản lí nền kinh tế"
+    ],
+    correct: "Về quan hệ giữa gắn tăng trưởng kinh tế với công bằng xã hội"
+  },
+  {
+    question: "Những quy tắc, luật pháp, bộ máy quản lí và cơ chế vận hành nhằm điều chỉnh các hoạt động của con người trong một chế độ xã hội là nội dung thể hiện khái niệm nào?",
+    answers: [
+      "Thể chế",
+      "Quy luật",
+      "Nguyên tắc",
+      "Quản lí"
+    ],
+    correct: "Thể chế"
+  },
+  {
+    question: "Hệ thống quy tắc, luật pháp, bộ máy quản lí và cơ chế vận hành nhằm điều chỉnh hành vi của các chủ thể kinh tế, các hành vi sản xuất kinh doanh và các quan hệ kinh tế là nội dung thể hiện khái niệm nào?",
+    answers: [
+      "Cơ cấu kinh tế",
+      "Cơ cấu giai cấp",
+      "Thể chế kinh tế",
+      "Thể chế chính trị"
+    ],
+    correct: "Thể chế kinh tế"
+  },
+  {
+    question: "Yếu tố nào dưới đây không phải là bộ phận cơ bản của thể chế kinh tế?",
+    answers: [
+      "Hệ thống pháp luật về kinh tế của nhà nước",
+      "Các quy tắc xã hội không được nhà nước thừa nhận",
+      "Hệ thống các chủ thể thực hiện các hoạt động kinh tế",
+      "Các cơ chế, phương pháp thực hiện, vận hành nền kinh tế"
+    ],
+    correct: "Các quy tắc xã hội không được nhà nước thừa nhận"
+  },
+  {
+    question: "Hệ thống đường lối, chủ trương chiến lược, hệ thống luật pháp, chính sách quy định xác lập cơ chế vận hành, điều chỉnh chức năng, hoạt động, mục tiêu, phương thức hoạt động, các quan hệ lợi ích của các tổ chức, chủ thể kinh tế nhằm hướng tới xác lập đồng bộ các yếu tố thị trường, các loại thị trường hiện đại theo hướng góp phần thúc đẩy dân giàu, nước mạnh, dân chủ, công bằng, văn minh là nội dung thể hiện khái niệm nào dưới đây?",
+    answers: [
+      "Thể chế kinh tế thị trường định hướng xã hội chủ nghĩa",
+      "Thể chế sở hữu của nền kinh tế thị trường",
+      "Thể chế chính trị của kinh tế thị trường định hướng xã hội chủ nghĩa",
+      "Thể chế kinh tế thị trường tư bản chủ nghĩa"
+    ],
+    correct: "Thể chế kinh tế thị trường định hướng xã hội chủ nghĩa"
+  },
+  {
+    question: "Việc hoàn thiện thể chế kinh tế thị trường định hướng xã hội chủ nghĩa xuất phát từ lí do nào dưới đây?",
+    answers: [
+      "Hệ thống thể chế hiệu quả, đồng bộ các yếu tố thị trường và các loại thị trường",
+      "Hệ thống đã đầy đủ các yếu tố thị trường, các loại thị trường nên cần phải hoàn thiện",
+      "Thể chế kinh tế thị trường đã đồng bộ, hệ thống thể chế đầy đủ nhưng còn kém hiệu lực",
+      "Thể chế còn chưa đồng bộ, hệ thống thể chế chưa đầy đủ, kém hiệu lực"
+    ],
+    correct: "Thể chế còn chưa đồng bộ, hệ thống thể chế chưa đầy đủ, kém hiệu lực"
+  },
+{ question: "Nội dung nào dưới đây không liên quan đến việc hoàn thiện thể chế về sở hữu trong nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam?", answers: ["Thể chế hoá đầy đủ quyền tài sản của Nhà nước, tổ chức và cá nhân", "Hoàn thiện pháp luật về quản lí, khai thác và sử dụng tài nguyên thiên nhiên", "Hoàn thiện pháp luật về đầu tư vốn nhà nước, quản lí và sử dụng có hiệu quả tài sản công", "Hoàn thiện thể chế để phát triển đồng bộ, vận hành thông suốt các loại thị trường"], correct: "Hoàn thiện thể chế để phát triển đồng bộ, vận hành thông suốt các loại thị trường" },
+{ question: "Việc thể chế hoá đầy đủ quyền tài sản của Nhà nước, tổ chức và cá nhân bao gồm các quyền cơ bản nào dưới đây?", answers: ["Quyền sở hữu, quyền tự do, quyền chiếm đoạt và hưởng lợi từ tài sản", "Quyền sở hữu, quyền sử dụng, quyền định đoạt và hưởng lợi từ tài sản", "Quyền chuyển nhượng, quyền sở hữu, quyền định đoạt và hưởng lợi từ tài sản", "Quyền tự do, quyền sáng tạo, quyền tự quyết và hưởng lợi từ tài sản"], correct: "Quyền sở hữu, quyền sử dụng, quyền định đoạt và hưởng lợi từ tài sản" },
+{ question: "Nội dung nào dưới đây là sai khi nói về việc hoàn thiện thể chế phát triển các thành phần kinh tế, các loại hình doanh nghiệp?", answers: ["Thực hiện nhất quán một chế độ pháp lí kinh doanh cho các doanh nghiệp, không phân biệt hình thức sở hữu và thành phần kinh tế", "Mọi doanh nghiệp thuộc các thành phần kinh tế đều bình đẳng và cạnh tranh lành mạnh theo pháp luật", "Thực hiện nhất quán một chế độ pháp lí kinh doanh cho các doanh nghiệp, có sự phân biệt hình thức sở hữu và thành phần kinh tế", "Mọi doanh nghiệp thuộc các thành phần kinh tế đều hoạt động theo cơ chế thị trường"], correct: "Thực hiện nhất quán một chế độ pháp lí kinh doanh cho các doanh nghiệp, có sự phân biệt hình thức sở hữu và thành phần kinh tế" },
+{ question: "Việc hoàn thiện thể chế kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam không bao gồm nội dung nào dưới đây?", answers: ["Hoàn thiện thể chế về sở hữu, phát triển các thành phần kinh tế, các loại hình doanh nghiệp", "Hoàn thiện thể chế để hạn chế sự đồng bộ các yếu tố thị trường và các loại thị trường", "Hoàn thiện thể chế gắn tăng trưởng kinh tế với đảm bảo phát triển bền vững, tiến bộ và công bằng xã hội và thúc đẩy hội nhập quốc tế", "Hoàn thiện thể chế, đẩy mạnh, nâng cao năng lực lãnh đạo của Đảng và hệ thống chính trị"], correct: "Hoàn thiện thể chế để hạn chế sự đồng bộ các yếu tố thị trường và các loại thị trường" },
+{ question: "Việc hoàn thiện thể chế thu hút vốn đầu tư trực tiếp nước ngoài ở nước ta không được thực hiện theo hướng", answers: ["chủ động lựa chọn các dự án đầu tư nước ngoài có chuyển giao công nghệ tiên tiến và quản trị hiện đại.", "chủ động lựa chọn các dự án đầu tư nước ngoài có cơ sở nghiên cứu và phát triển công nghệ tại Việt Nam.", "chủ động lựa chọn các dự án đầu tư nước ngoài tập trung vào các ngành công nghiệp nặng, khai thác tài nguyên thiên nhiên.", "chủ động lựa chọn các dự án đầu tư nước ngoài có cam kết liên kết, hỗ trợ doanh nghiệp trong nước tham gia chuỗi giá trị toàn cầu."], correct: "chủ động lựa chọn các dự án đầu tư nước ngoài tập trung vào các ngành công nghiệp nặng, khai thác tài nguyên thiên nhiên." },
+{ question: "Sự thoả mãn nhu cầu của con người mà sự thoả mãn nhu cầu này phải được nhận thức và đặt trong mối quan hệ xã hội ứng với trình độ phát triển nhất định của nền sản xuất xã hội đó là nội dung thể hiện khái niệm nào?", answers: ["Lợi ích", "Giá trị sử dụng", "Nhu cầu", "Hưởng thụ"], correct: "Lợi ích" },
+{ question: "Lợi ích vật chất đóng vai trò gì đối với hoạt động của mỗi cá nhân, tổ chức, xã hội?", answers: ["Phụ thuộc", "Quyết định", "Độc lập", "Bổ trợ"], correct: "Quyết định" },
+{ question: "Về bản chất, lợi ích phản ánh mục đích và động cơ của các quan hệ kinh tế giữa các chủ thể trong nền sản xuất xã hội là", answers: ["Lợi ích xã hội", "Lợi ích tinh thần", "Lợi ích công cộng", "Lợi ích kinh tế"], correct: "Lợi ích kinh tế" },
+{ question: "Biểu hiện lợi ích kinh tế của người lao động trước hết là yếu tố nào dưới đây?", answers: ["Thu nhập", "Lợi nhuận", "Chất lượng", "Trách nhiệm"], correct: "Thu nhập" },
+{ question: "Biểu hiện lợi ích kinh tế của chủ doanh nghiệp trước hết là yếu tố nào dưới đây?", answers: ["Tiền công", "Lợi nhuận", "Thu nhập", "Trách nhiệm"], correct: "Lợi nhuận" },
+{ question: "Khẳng định nào dưới đây là sai khi nói về biểu hiện của lợi ích kinh tế?", answers: ["Gắn với các chủ thể kinh tế khác nhau là những lợi ích giống nhau", "Về lâu dài, đã tham gia vào hoạt động kinh tế thì lợi ích kinh tế là lợi ích quyết định", "Trong nền kinh tế thị trường, ở đâu có hoạt động sản xuất kinh doanh, lao động ở đó có quan hệ lợi ích và lợi ích kinh tế", "Gắn với các chủ thể kinh tế khác nhau là những lợi ích tương ứng"], correct: "Gắn với các chủ thể kinh tế khác nhau là những lợi ích giống nhau" },
+{ question: "Điểm chung của tất cả các hoạt động kinh tế trong nền kinh tế thị trường là hướng tới", answers: ["Lợi ích", "Tự chủ", "Trách nhiệm", "Cạnh tranh"], correct: "Lợi ích" },
+{ question: "Khẳng định nào dưới đây là đúng khi nói về vai trò của lợi ích kinh tế đối với các chủ thể kinh tế-xã hội?", answers: ["Lợi ích kinh tế là động lực gián tiếp của các chủ thể và hoạt động kinh tế-xã hội, là cơ sở thúc đẩy sự phát triển các lợi ích khác", "Lợi ích kinh tế mang tính chủ quan và phụ thuộc vào sự phát triển của các lợi ích khác", "Lợi ích kinh tế là động lực gián tiếp của các chủ thể và hoạt động kinh tế-xã hội, là động lực mạnh mẽ để phát triển kinh tế-xã hội", "Lợi ích kinh tế là động lực trực tiếp của các chủ thể và hoạt động kinh tế-xã hội, là cơ sở thúc đẩy sự phát triển các lợi ích khác"], correct: "Lợi ích kinh tế là động lực trực tiếp của các chủ thể và hoạt động kinh tế-xã hội, là cơ sở thúc đẩy sự phát triển các lợi ích khác" },
+{ question: "Các loại thị trường cơ bản như thị trường hàng hóa, dịch vụ, thị trường vốn, thị trường công nghệ, thị trường hàng hóa sức lao động… cần phải được hoàn thiện là nội dung của việc hoàn thiện thể chế nào dưới đây?", answers: ["Thể chế để phát triển đồng bộ, vận hành thông suốt các loại thị trường", "Thể chế phát triển đồng bộ các yếu tố thị trường", "Thể chế gắn kết tăng cường kinh tế với bảo đảm phát triển bền vững", "Thể chế phát triển các thành phần kinh tế, các loại hình doanh nghiệp"], correct: "Thể chế để phát triển đồng bộ, vận hành thông suốt các loại thị trường" },
+{ question: "Hình thức lợi ích nào là cơ sở thúc đẩy sự phát triển của các lợi ích khác?", answers: ["Lợi ích xã hội", "Lợi ích công cộng", "Lợi ích tập thể", "Lợi ích kinh tế"], correct: "Lợi ích kinh tế" },
+{ question: "Việc theo đuổi những lợi ích kinh tế không chính đáng, không hợp lí, không hợp pháp sẽ...", answers: ["đóng góp vào sự phát triển của nền kinh tế - xã hội.", "gây trở ngại cho sự phát triển kinh tế - xã hội.", "đem lại lợi ích kinh tế hợp pháp cho các chủ thể.", "tạo ra động lực cho sự phát triển của các doanh nghiệp."], correct: "gây trở ngại cho sự phát triển kinh tế - xã hội." },
+{ question: "Quan điểm của Đảng và Nhà nước ta về lợi ích kinh tế là: Coi lợi ích kinh tế là", answers: ["động lực của các hoạt động kinh tế; phải tôn trọng lợi ích cá nhân chính đáng.", "yếu tố không quyết định hoạt động kinh tế; phải tôn trọng lợi ích cá nhân chính đáng.", "trở ngại của các hoạt động kinh tế; phải nhấn mạnh lợi ích tập thể chính đáng.", "nhân tố phụ thuộc hoạt động kinh tế; phải đảm bảo lợi ích doanh nghiệp chính đáng."], correct: "động lực của các hoạt động kinh tế; phải tôn trọng lợi ích cá nhân chính đáng." },
+{ question: "Sự thiết lập những tương tác giữa con người với con người, giữa các cộng đồng người, giữa các tổ chức kinh tế, giữa các bộ phận hợp thành nền kinh tế, giữa con người với tổ chức kinh tế, giữa quốc gia với phần còn lại của thế giới nhằm mục tiêu xác lập các lợi ích kinh tế trong mỗi liên hệ với trình độ phát triển của lực lượng sản xuất và kiến trúc thượng tầng tương ứng của một giai đoạn phát triển xã hội nhất định là nội dung của khái niệm nào?", answers: ["Lợi ích kinh tế", "Quan hệ lợi ích kinh tế", "Lợi ích vật chất", "Quan hệ lợi ích tập thể"], correct: "Quan hệ lợi ích kinh tế" },
+{ question: "Quan hệ nào dưới đây không phải là biểu hiện của quan hệ lợi ích kinh tế?", answers: ["Quan hệ giữa một tổ chức kinh tế với một cá nhân trong tổ chức kinh tế đó", "Quan hệ giữa các chủ thể, các tổ chức, các bộ phận khác nhau hợp thành nền kinh tế", "Quan hệ giữa một tổ chức kinh tế với một cá nhân ngoài tổ chức kinh tế đó", "Quan hệ giữa một quốc gia với các quốc gia khác trên thế giới"], correct: "Quan hệ giữa một tổ chức kinh tế với một cá nhân ngoài tổ chức kinh tế đó" },
+//
+{
+    question: "Quan hệ lợi ích kinh tế thống nhất với nhau vì",
+    answers: [
+      "một chủ thể có thể trở thành bộ phận cấu thành của chủ thể khác, do đó lợi ích của chủ thể này được thực hiện thì lợi ích của chủ thể khác cũng đuợc thực hiện.",
+      "các chủ thể hành động theo những phương thức khác nhau để thực hiện lợi ích của minh.",
+      "các chủ thể cạnh tranh với nhau; ngăn cản, làm tổn hại đến lọi ích củachủ thể khác để thực hiện lợi ích của mình.",
+      "một chủ thể càng thu được nhiều lợi ích kinh tế thì lợi ích của nhữngchú thể khác càng bi tôn hại."
+    ],
+    correct: "một chủ thể có thể trở thành bộ phận cấu thành của chủ thể khác, do đó lợi ích của chủ thể này được thực hiện thì lợi ích của chủ thể khác cũng đuợc thực hiện."
+  },
+  {
+    question: "Trường hợp nào dưới đây không thể hiện sự thống nhất trong quan hệlợi ích kinh tế?",
+    answers: [
+      "Doanh nghiệp hoạt động càng có hiệu quả, lợi ích doanh nghiệp càng duoc đảm bảo thì lợi ích của người lao động cảng được thực hiện tốt.",
+      "Lợi ích của người lao động càng được thục hiện tốt thi người lao động càng tích cực làm việc và từ đó lọi ích của doanh nghiệp càng duoc thực hiện tốt.",
+      "Nguoi su dung lao động luôn tìm cách cắt giảm tới múc thâp nhât các khoan chi phí, trong dó có tiền luong của nguòi lao dong de tǎng lọi nhuận.",
+      "Doanh nghiệp cải tiến kĩ thuật, nâng cao chất phâm,thu đuợcnhiều lợi nhuận thì nền kinh tế, đất nuớc càng phát triển."
+    ],
+    correct: "Nguoi su dung lao động luôn tìm cách cắt giảm tới múc thâp nhât các khoan chi phí, trong dó có tiền luong của nguòi lao dong de tǎng lọi nhuận."
+  },
+  {
+    question: "Khi nào thì quan hệ lợi ích kinh tế giữa doanh nghiệp và xã hội thống nhất vói nhau?",
+    answers: [
+      "Doanh nghiệp làm hàng giả, buôn lậu, trốn thuế",
+      "Doanh nghiệp cải tiến kĩ thuật, nâng cao chất lượng sản phẩm",
+      "Có các chính sách cản trở sự phát triển của doanh nghiệp",
+      "Doanh nghiệp xả thải gây ô nhiễm môi trường"
+    ],
+    correct: "Doanh nghiệp cải tiến kĩ thuật, nâng cao chất lượng sản phẩm"
+  },
+  {
+    question: "Khi các chủ thể kinh tế hành động theo những phưong thúc khác nhau để thực hiện các lợi ích của mình, sự khác nhau đó đến mức đối lậpthì trở thành",
+    answers: [
+      "hợp tác.",
+      "mâu thuẫn.",
+      "thông nhất.",
+      "cạnh tranh."
+    ],
+    correct: "mâu thuẫn."
+  },
+  {
+    question: "Vì lợi ích của mình, các cá nhân hay doanh nghiệp có thể làm hàng giả, buôn lậu, trốn thuế. Khi đó, quan hệ lợi ích của cá nhân, doanh nghiệp và lợi ích của xã hội như thế nào?",
+    answers: [
+      "Mâu thuẫn với nhau",
+      "Thống nhât với nhau",
+      "Độc lâp với nhau",
+      "Hợp tác với nhau"
+    ],
+    correct: "Mâu thuẫn với nhau"
+  },
+  {
+    question: "Trong trường hợp có mâu thuẫn về quan hệ lợi ích kinh tế, khíchủ doanh nghiệp càng thu được nhiều lợi nhuận thì",
+    answers: [
+      "lợi ích kinh tế của người tiêu dùng, của xã hội càng được đảm bảo.",
+      "lợi ích kinh tế của người tiêu dùng, của xã hội càng bị tổn hại.",
+      "lợi ích kinh tế của người tiêu dùng, của xã hội càng gia tăng.",
+      "lợi ích kinh tế của người tiêu dùng, của xã hội vẫn như cũ."
+    ],
+    correct: "lợi ích kinh tế của người tiêu dùng, của xã hội càng bị tổn hại."
+  },
+  {
+    question: "Trong các hình thức lợi ích kinh tế, lợi ích nào là cơ sở, nền tàng của các lợi ích khác?",
+    answers: [
+      "Lợi ích cá nhân",
+      "Lợi ích tâp thê",
+      "Lợi ích cua nhóm",
+      "Lợi ích xã hội"
+    ],
+    correct: "Lợi ích cá nhân"
+  },
+  {
+    question: "Các nhân tố ảnh hưởng đến quan hệ lợi ích kinh tế là",
+    answers: [
+      "trình độ phát triển của lực lượng sản xuất; địa vị của chủ thể trong quan hệsản xuất xã hội; chính sách phân phối thu nhập của nhà nước; hội nhập kinh tế quốc tế.",
+      "trình độ phát triển của quan hệ sản xuất; địa vị của chủ thể trong quan hệquản lí; chính sách phân phối thu nhập của nhà nước; hội nhập kinh tế quốctế.",
+      "địa vị của chủ thể trong quan hệ quản lí; trình độ phát triển của nềnkinh tế thị trường; kế hoạch sản xuất kinh doanh của doanh nghiệp;hội nhập kinh tế quốc tế.",
+      "trình độ phát triển của quan hệ sản xuất; nguồn nhân lực; chính sách giải quyết việc làm của nhà nước; chính sách đối ngoại."
+    ],
+    correct: "trình độ phát triển của lực lượng sản xuất; địa vị của chủ thể trong quan hệsản xuất xã hội; chính sách phân phối thu nhập của nhà nước; hội nhập kinh tế quốc tế."
+  },
+  {
+    question: "Yếu tố ảnh hưởng đến lợi ích kinh tế của các chủ thể sản xuất kinhdoanh trên thị trường nội địa khi cạnh tranh với hàng hoá nước ngoài là",
+    answers: [
+      "hội nhập kinh tế quốc tế.",
+      "trình độ pát triển của lực luợng sản xuất.",
+      "địa vị của chủ thể trong hệ thống quan hệ sản xuất xã hội.",
+      "chính sách phân phối thu nhập của nhà nước."
+    ],
+    correct: "hội nhập kinh tế quốc tế."
+  },
+  {
+    question: "Quan hệ nào dưới đây không phải là quan hệ lợi ích kinh tế cơ bảntrong nền kinh tế thị truòng?",
+    answers: [
+      "Quan hệ lợi ích giữa người lao động và người sử dụng lao động",
+      "Quan hệ lợi ích giữa những người sử dụng lao động",
+      "Quan hê Lợi ích giua các lọi ích tinh than cua con nguòi",
+      "Quan hệ giữa nhũng người lao động"
+    ],
+    correct: "Quan hê Lợi ích giua các lọi ích tinh than cua con nguòi"
+  },
+  {
+    question: "Khằng định nào dưới đây là đúng khi nói về vai trò của lợi ích xã hội đối với lợi ích cá nhân?",
+    answers: [
+      "Lợi ích xã hội đóng vai trò định hướng cho lợi ích cá nhân và các hoat động thục hiện lợi ích cá nhân.",
+      "Lợi ích xã hội đóng vai trò quyết định cho lợi ích cá nhân và cáchoạt động thực hiện lợi ích cá nhân.",
+      "Lợi ích xã hội đóng vai trò giám sát cho lợi ích cá nhân và các hoạt động thực hiện lợi ích cá nhân.",
+      "Lợi ích xã hội độc lập, tách biệt với lợi ích cá nhân và các hoạt độngthực hiện lợi ích cá nhân."
+    ],
+    correct: "Lợi ích xã hội đóng vai trò định hướng cho lợi ích cá nhân và các hoat động thục hiện lợi ích cá nhân."
+  },
+  {
+    question: "Khi bán sức lao động, người lao động nhận được tiền lương (haytiền công) và chịu sự quản lí, điều hành của người sử dụng lao động lànội dung thể hiện cho quan hệ lợi ích kinh tế nào dưới đây?",
+    answers: [
+      "Quan hệ lợi ích giữa người lao động và người sử dụng lao động",
+      "Quan hệ lợi ích giữa những người sử dụng lao động",
+      "Quan hệ giữa lợi ích cá nhân, lợi ích nhóm và lợi ích xã hội",
+      "Quan hệ giữa lợi ích giữa nhũng người lao động"
+    ],
+    correct: "Quan hệ lợi ích giữa người lao động và người sử dụng lao động"
+  },
+  {
+    question: "Lợi ích kinh tế của người sử dụng lao động thu được trong quá trìnhkinh doanh là",
+    answers: [
+      "chi phí.",
+      "lợi nhuận.",
+      "đầu tư.",
+      "quy mô."
+    ],
+    correct: "lợi nhuận."
+  },
+  {
+    question: "Khi bán sức lao động của mình cho người sử dụng lao động, lợi íchkinh tế của người lao động là",
+    answers: [
+      "lãi suât.",
+      "thu nhập.",
+      "chi phí.",
+      "Lợi nhuân."
+    ],
+    correct: "thu nhập."
+  },
+  {
+    question: "Điều kiện quan trọng để thực hiện lợi ích kinh tế giữa nguời lao độngvà người sử dụng lao động là",
+    answers: [
+      "gia tăng sự cạnh tranh trong quan hệ lợi ích giữa hai bên.",
+      "tao lâp sự thống nhất trong quan hệ lợi ích giữa hai bên.",
+      "gia tăng mâu thuẫn trong quan hệ lợi ích giữa hai bên.",
+      "giảm tiền lương của người lao động, tăng lợi nhuận của người sử dụnglao đông."
+    ],
+    correct: "tao lâp sự thống nhất trong quan hệ lợi ích giữa hai bên."
+  },
+  {
+    question: "Vì lợi ích của mình, người sử dụng lao động luôn tìm cách cắt giảmtới mức thấp nhất các khoản chi phí, trong đó có tiền lương của ngườilao động để tăng lợi nhuận. Điều này làm cho quan hệ lợi ích giữa ngườisử dụng lao động và người lao động như thế nào?",
+    answers: [
+      "Mâu thuẫn vói nhau",
+      "Thống nhât vói nhau",
+      "Hợp tác vói nhau",
+      "Dong thuan vói nhau"
+    ],
+    correct: "Mâu thuẫn vói nhau"
+  },
+  {
+    question: "Công đoàn là tổ chức quan trọng nhất bảo vệ quyền lợi của",
+    answers: [
+      "doanh nghiêp.",
+      "nguòi sử dụng lao động.",
+      "người lao động.",
+      "công ty."
+    ],
+    correct: "người lao động."
+  },
+  {
+    question: "Nghiệp đoàn là tổ chức bảo vệ quyền lợi của",
+    answers: [
+      "lao dông làm thuê",
+      "nguời sử dụng lao động.",
+      "người lao dông.",
+      "công nhân trong nhà máy."
+    ],
+    correct: "nguời sử dụng lao động."
+  },
+  {
+    question: "Trong cơ chế thị trường, những người sử dụng lao động vừa làđối tác, vừa là đối thủ của nhau là sự thể hiện quan hệ lợi ích của các chủthể nào dưới đây?",
+    answers: [
+      "Quan hệ lợi ích giữa người lao động và người sử dụng lao động",
+      "Quan hệ lọi ích giữa nhũng nguòi su dung lao động",
+      "Quan hệ giữa lợi ích cá nhân, lợi ích nhóm và lợi ích xã hội",
+      "Quan hệ giữa lọi ích giữa những người lao động"
+    ],
+    correct: "Quan hệ lọi ích giữa nhũng nguòi su dung lao động"
+  },
+  {
+    question: "Nếu có nhiều người bán sức lao động, người lao động phải cạnh tranhvới nhau là sự thể hiện quan hệ lợi ích giữa các chủ thể nào dưới đây?",
+    answers: [
+      "Quan hệ lọi ích giữa người lao động và người sử dụng lao động",
+      "Quan hệ lợi ích giữa những người su dung lao động",
+      "Quan hệ giữa lợi ích cá nhân, lợi ích nhóm và lợi ích xã hội",
+      "Quan hệ lợi ích giữa nhũng nguời lao động"
+    ],
+    correct: "Quan hệ lợi ích giữa nhũng nguời lao động"
+  },
+  {
+    question: "Các cá nhân, tổ chức hoạt động trong cùng ngành, cùng lĩnh vực, liên kết với nhau trong hành động để thục hiện tốt hơn lợi ích riêng(lợi ích cá nhân, tổ chức) của họ hình thành nên",
+    answers: [
+      "“lợi ích nhóm”.",
+      "“lợi ích tâp thể”.",
+      "“lợi ích xã hội”.",
+      "“lợi ích cá nhân”."
+    ],
+    correct: "“lợi ích nhóm”."
+  },
+  {
+    question: "Các cá nhân, tổ chức hoạt động trong các ngành, lĩnh vực khác nhau nhưng có mối liên hệ với nhau, liên kết với nhau trong hành động để thựchiện tốt hơn lợi ích riêng của mình hình thành nên",
+    answers: [
+      "“đồng Lợi ích”.",
+      "“nhóm lợi ích”.",
+      "“tổng lợi ích”.",
+      "“lợi ích nhóm”."
+    ],
+    correct: "“nhóm lợi ích”."
+  },
+  {
+    question: "Các cá nhân, tổ chức nào dưới đây không phải là biểu hiện của lợi ích nhóm?",
+    answers: [
+      "Các hiệp hội ngành nghề",
+      "Mô hình liên kết giữa doanh nghiệp kinh doanh bất động sản - ngân hàng thương mại - người mua nhà",
+      "Các nhóm dân cư chung một số lợi ích theo vùng, theo sở thích",
+      "Các tổ chức chính trị-xã hôi"
+    ],
+    correct: "Mô hình liên kết giữa doanh nghiệp kinh doanh bất động sản - ngân hàng thương mại - người mua nhà"
+  },
+  {
+    question: "Các cá nhân, tổ chức nào dưới đây là biểu hiện của nhóm lợi ích?",
+    answers: [
+      "Các hiệp hội ngành nghề",
+      "Mô hình liên kết giữa “4 nhà” trong nông nghiệp: nhà nông -nhà doanh nghiêp-nhà khoa học - nhà nước",
+      "Các nhóm dân cư chung một số lợi ích theo vùng, theo sở thích",
+      "Các tổ chức chính trị-xã hội"
+    ],
+    correct: "Mô hình liên kết giữa “4 nhà” trong nông nghiệp: nhà nông -nhà doanh nghiêp-nhà khoa học - nhà nước"
+  },
+  {
+    question: "Khẳng định nào dưới đây là đúng khi nói về phương thức thực hiệnlợi ích kinh tế trong các quan hệ lợi ích chủ yếu của nền kinh tế thị trưòngđịnh hướng xã hội chủ nghĩa?",
+    answers: [
+      "Thực hiện lợi ích kinh tế theo nguyên tắc thị trường; theo chính sách của nhà nước và vai trò của các tổ chức xã hội",
+      "Thực hiện lợi ích kinh tế theo các nguyên tắc của thị trường, chính sách của doanh nghiệp và vai trò của doanh nghiệp",
+      "Thực hiện lợi ích kinh tế theo chính sách của nhà nước và vai trò của các tổ chức xã hội, không theo nguyên tắc thị trường",
+      "Thực hiện lợi ích kinh tế theo nguyên tắc thị trường; không theo chính sách của nhà nước và vai trò của các tổ chức xã hội"
+    ],
+    correct: "Thực hiện lợi ích kinh tế theo nguyên tắc thị trường; theo chính sách của nhà nước và vai trò của các tổ chức xã hội"
+  },
+  {
+    question: "Yếu tố đảm bảo sự hài hoà lợi ích kinh tế trong nền kinh tế thị truờngđịnh hướng xã hội chủ nghĩa là",
+    answers: [
+      "kinh tế thị trường và sự can thiệp của doanh nghiệp.",
+      "kinh tế thị trường và sự can thiệp của nhà nước.",
+      "kinh tế thị trường thuần tuý.",
+      "dân cư, tập thể, người lao động."
+    ],
+    correct: "kinh tế thị trường và sự can thiệp của nhà nước."
+  },
+  {
+    question: "Vai trò của nhà nước trong việc bảo đảm hài hoà các quan hệ lợi íchkhông thể hiện ở nội dung nào dưới đây?",
+    colors: ["B"],
+    answers: [
+      "Bao vê Lợi ích hợp pháp, tao môi trròng thuan lọi cho hoạt dộng tìm kiếm lợi ích của các chủ thể kinh tế",
+      "Gia tăng xung đột lợi ích giữa cá nhân - doanh nghiệp - xã hội",
+      "Kiểm soát, ngăn ngừa các quan hệ lợi ích có ảnh huưởng tiêu cực đôi vói suphát triển xã hội",
+      "Giải quyết nhữmg mâu thuẫn trong quan hệ lọi ích kinh tế"
+    ],
+    correct: "Gia tăng xung đột lợi ích giữa cá nhân - doanh nghiệp - xã hội"
+  },
+  {
+    question: "Nguyên tắc giải quyết mâu thuẫn giữa các lợi ích kinh tế là",
+    answers: [
+      "đặt lợi ích của doanh nghiệp lên trên hết, khi có mâu thuẫn thì các bên tu hoà giai.",
+      "đặt lợi ích của nhóm lên trên hết, không nhân nhượng và không có sự tham gia của các bên.",
+      "phải có sự tham gia của các bên liên quan, có nhân nhượng và đặt lợi íchcủa đất nước lên trên hết.",
+      "phải có sự tham gia của các bên liên quan, không nhân nhưọng và đặt lợi ích của cá nhân lên trên hết."
+    ],
+    correct: "phải có sự tham gia của các bên liên quan, có nhân nhượng và đặt lợi íchcủa đất nước lên trên hết."
+  }
+
+];
+
+let currentQuestionIndex = 0;
+let score = 0;
+let answered = false;
+let autoNextTimeout = null;
+
+const questionEl = document.getElementById('question');
+const answersEl = document.getElementById('answers');
+const progressEl = document.getElementById('progress');
+const resultEl = document.getElementById('result');
+const quizContainer = document.getElementById('quiz-container');
+
+const optionLetters = ['A', 'B', 'C', 'D'];
+const optionColors = {
+A: '#D0E8FF',
+B: '#D4EDDA',
+C: '#FFE5B4',
+D: '#F8D7DA',
+};
+
+function loadQuestion() {
+clearTimeout(autoNextTimeout);
+answered = false;
+resultEl.innerText = '';
+answersEl.innerHTML = '';
+const currentData = quizData[currentQuestionIndex];
+questionEl.innerText = `Câu ${currentQuestionIndex + 1}: ${currentData.question}`;
+progressEl.innerText = `Câu ${currentQuestionIndex + 1} / ${quizData.length}`;
+
+currentData.answers.forEach((answer, index) => {
+    const letter = optionLetters[index];
+    const btn = document.createElement('div');
+    btn.classList.add('answer-option', `answer-${letter}`);
+    btn.style.backgroundColor = optionColors[letter];
+    btn.style.color = '#000000';
+    btn.innerHTML = `<span class="answer-label">${letter}</span> ${answer}`;
+    btn.tabIndex = 0;
+    btn.onclick = () => selectAnswer(btn, answer);
+    btn.onkeydown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        btn.click();
+    }
+    };
+    answersEl.appendChild(btn);
+});
+
+quizContainer.focus();
+}
+
+function selectAnswer(btn, answer) {
+if (answered) return;
+answered = true;
+
+const allOptions = document.querySelectorAll('.answer-option');
+allOptions.forEach(opt => opt.style.pointerEvents = 'none');
+
+const correctAnswer = quizData[currentQuestionIndex].correct;
+
+if (answer === correctAnswer) {
+    btn.classList.add('correct');
+    score++;
+} else {
+    btn.classList.add('wrong');
+    allOptions.forEach(opt => {
+    // opt.innerText.trim().substring(2) bỏ ký tự A/B/C/D và dấu cách
+    if (opt.innerText.trim().substring(2) === correctAnswer) {
+        opt.classList.add('correct');
+    }
+    });
+}
+
+resultEl.innerText = 'Nhấn Enter hoặc Space để sang câu tiếp theo...';
+
+autoNextTimeout = setTimeout(() => {
+    goToNextQuestion();
+}, 1000);
+}
+
+function goToNextQuestion() {
+clearTimeout(autoNextTimeout);
+if (currentQuestionIndex < quizData.length - 1) {
+    currentQuestionIndex++;
+    loadQuestion();
+} else {
+    showResult();
+}
+}
+
+function goToPreviousQuestion() {
+clearTimeout(autoNextTimeout);
+if (currentQuestionIndex > 0) {
+    currentQuestionIndex--;
+    loadQuestion();
+}
+}
+
+quizContainer.addEventListener('keydown', function(e) {
+if ((e.key === 'Enter' || e.key === ' ') && answered) {
+    e.preventDefault();
+    goToNextQuestion();
+} else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    goToNextQuestion();
+} else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    goToPreviousQuestion();
+}
+});
+
+function showResult() {
+questionEl.innerText = '';
+answersEl.innerHTML = '';
+progressEl.innerText = '';
+resultEl.innerText = `Bạn đã hoàn thành bài quiz! Điểm của bạn là ${score} / ${quizData.length}.`;
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

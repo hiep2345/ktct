@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<title>Quiz Kinh Tế Chính Trị - Chương 2 - Hàng hóa, Thị trường và vai trò của các chủ thể tham gia thị trường</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+    background: #400848; /* tím pastel */
+    color: #222;
+}
+#quiz-container {
+    max-width: 600px;
+    margin: auto;
+    background: #b753c6;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+    outline: none;
+}
+#question {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #222;
+}
+.answer-option {
+    color: #000000 !important;
+    padding: 15px 20px;
+    margin-bottom: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 1em;
+    font-weight: 500;
+    border: 2px solid transparent;
+    transition: background-color 0.3s, border-color 0.3s;
+    display: flex;
+    align-items: center;
+}
+.answer-option:hover {
+    filter: brightness(0.95);
+}
+.answer-option:focus {
+    outline: none;
+    border-color: #ffcc00;
+    box-shadow: 0 0 8px #ffcc00;
+}
+.answer-A { background-color: #D0E8FF; }
+.answer-B { background-color: #D4EDDA; }
+.answer-C { background-color: #FFE5B4; }
+.answer-D { background-color: #F8D7DA; }
+.correct {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border-color: #388e3c !important;
+}
+.wrong {
+    background-color: #f44336 !important;
+    color: white !important;
+    border-color: #d32f2f !important;
+}
+#progress {
+    margin-top: 20px;
+    font-size: 0.95em;
+    color: #555;
+    font-style: italic;
+}
+#result {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #4CAF50;
+    text-align: center;
+    margin-top: 35px;
+}
+.answer-label {
+    font-weight: 700;
+    margin-right: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div id="quiz-container" tabindex="0" aria-live="polite" aria-atomic="true" role="region">
+<div id="question"></div>
+<div id="answers"></div>
+<div id="progress"></div>
+<div id="result" aria-live="assertive"></div>
+</div>
+
+<script>
+const quizData = [
+{ question: 'Toàn cầu hóa là gì?', answers: ['Sự gia tăng kết nối và phụ thuộc lẫn nhau giữa các quốc gia trên thế giới.', 'Việc các nước trở nên giống nhau về chính trị.', 'Việc xóa bỏ hoàn toàn biên giới quốc gia.', 'Chỉ là sự phát triển của internet.'], correct: 'Sự gia tăng kết nối và phụ thuộc lẫn nhau giữa các quốc gia trên thế giới.' },
+{ question: 'Một trong những đặc điểm của toàn cầu hóa là:', answers: ['Gia tăng sự phân hóa giàu nghèo.', 'Thu hẹp khoảng cách giữa các quốc gia.', 'Chỉ có lợi cho nước nghèo.', 'Giúp xóa bỏ mọi xung đột.'], correct: 'Gia tăng sự phân hóa giàu nghèo.' },
+{ question: 'Một hệ quả tích cực của toàn cầu hóa là:', answers: ['Thúc đẩy phát triển kinh tế và khoa học công nghệ.', 'Gia tăng xung đột văn hóa.', 'Làm mất bản sắc văn hóa dân tộc.', 'Gia tăng cạnh tranh không lành mạnh.'], correct: 'Thúc đẩy phát triển kinh tế và khoa học công nghệ.' },
+{ question: 'Toàn cầu hóa KHÔNG bao gồm lĩnh vực nào sau đây?', answers: ['Văn hóa', 'Giáo dục', 'Kinh tế', 'Khí tượng'], correct: 'Khí tượng' },
+{ question: 'Quá trình toàn cầu hóa chịu tác động mạnh mẽ nhất từ:', answers: ['Sự phát triển của công nghệ thông tin và truyền thông.', 'Chiến tranh thế giới.', 'Thiên tai toàn cầu.', 'Sự di cư tự nhiên của con người.'], correct: 'Sự phát triển của công nghệ thông tin và truyền thông.' },
+{ question: 'Một biểu hiện của toàn cầu hóa về kinh tế là:', answers: ['Hình thành các tổ chức thương mại quốc tế như WTO.', 'Mỗi nước tự cung tự cấp hoàn toàn.', 'Chỉ các nước giàu phát triển kinh tế.', 'Cấm đầu tư nước ngoài.'], correct: 'Hình thành các tổ chức thương mại quốc tế như WTO.' },
+{ question: 'Vai trò của tổ chức WTO là gì?', answers: ['Điều phối và thúc đẩy thương mại toàn cầu.', 'Hỗ trợ các tổ chức từ thiện.', 'Quản lý các vấn đề quân sự toàn cầu.', 'Cấm các nước yếu kém tham gia thương mại.'], correct: 'Điều phối và thúc đẩy thương mại toàn cầu.' },
+{ question: 'Tác động tiêu cực của toàn cầu hóa văn hóa là:', answers: ['Nguy cơ làm mai một bản sắc văn hóa dân tộc.', 'Thúc đẩy giao lưu văn hóa.', 'Mở rộng hiểu biết về văn hóa các nước.', 'Tạo điều kiện phát triển du lịch.'], correct: 'Nguy cơ làm mai một bản sắc văn hóa dân tộc.' },
+{ question: 'Toàn cầu hóa văn hóa góp phần:', answers: ['Thúc đẩy giao lưu và học hỏi giữa các dân tộc.', 'Giảm sự hiểu biết giữa các quốc gia.', 'Cản trở phát triển du lịch.', 'Ngăn cản truyền bá kiến thức.'], correct: 'Thúc đẩy giao lưu và học hỏi giữa các dân tộc.' },
+{ question: 'Thách thức của toàn cầu hóa kinh tế là:', answers: ['Gia tăng bất bình đẳng, khủng hoảng lan truyền, mất bản sắc văn hóa.', 'Chỉ gia tăng bất bình đẳng.', 'Chỉ khủng hoảng lan truyền.', 'Chỉ mất bản sắc văn hóa.'], correct: 'Gia tăng bất bình đẳng, khủng hoảng lan truyền, mất bản sắc văn hóa.' },
+{ question: 'Giá trị sử dụng của hàng hóa là gì?', answers: ['Là công dụng mà sản phẩm có thể thỏa mãn nhu cầu nào đó của con người.', 'Là giá trị về mặt đạo đức mà hàng hóa mang lại.', 'Là khả năng trao đổi hàng hóa trên thị trường.', 'Là mức độ được ưa chuộng của hàng hóa.'], correct: 'Là công dụng mà sản phẩm có thể thỏa mãn nhu cầu nào đó của con người.' },
+{ question: 'Giá trị của hàng hóa được hiểu là', answers: ['Giá trị cảm xúc mà hàng hóa mang lại cho con người.', 'Lượng giá trị xã hội của lao động đã hao phí để sản xuất ra hàng hóa.', 'Sự đánh giá chủ quan của người tiêu dùng về hàng hóa.', 'Lượng chi phí bỏ ra để sản xuất hàng hóa.'], correct: 'Lượng giá trị xã hội của lao động đã hao phí để sản xuất ra hàng hóa.' },
+{ question: 'Giá trị của hàng hóa được đo bằng gì?', answers: ['Thời gian lao động cá biệt', 'Giá thị trường', 'Thời gian lao động xã hội cần thiết', 'Giá trị sử dụng'], correct: 'Thời gian lao động xã hội cần thiết' },
+{ question: 'Yếu tố quyết định đến giá trị của hàng hóa là', answers: ['Thời gian tiêu dùng sản phẩm', 'Thời gian vận chuyển hàng hóa', 'Thời gian lao động cá biệt', 'Thời gian lao động xã hội cần thiết'], correct: 'Thời gian lao động xã hội cần thiết' },
+{ question: 'Các yếu tố ảnh hưởng đến lượng giá trị của hàng hóa là', answers: ['Năng suất lao động và cường độ lao động', 'Giá trị sử dụng và thị hiếu người tiêu dùng', 'Thời gian tiêu dùng và vận chuyển', 'Tỷ lệ cung – cầu và điều kiện tự nhiên'], correct: 'Năng suất lao động và cường độ lao động' },
+{ question: 'Khi năng suất lao động tăng thì lượng giá trị hàng hóa sẽ', answers: ['Tăng', 'Không thay đổi', 'Giảm', 'Tăng gấp đôi'], correct: 'Giảm' },
+{ question: 'Cường độ lao động tăng thì lượng giá trị hàng hóa sẽ', answers: ['Tăng', 'Không thay đổi', 'Giảm', 'Giảm một nửa'], correct: 'Tăng' },
+{ question: 'Tăng cường độ lao động có nghĩa là', answers: ['Kéo dài thời gian lao động trong ngày', 'Tăng mức hao phí lao động trong một đơn vị thời gian', 'Tăng số lượng lao động trong một dây chuyền sản xuất', 'Tăng mức độ phức tạp của lao động'], correct: 'Tăng mức hao phí lao động trong một đơn vị thời gian' },
+{ question: 'Đâu là ví dụ thể hiện tính hai mặt của hàng hóa?', answers: ['Một đôi giày có thể đi và cũng có thể đổi lấy gạo', 'Một chiếc máy tính được sử dụng trong học tập', 'Một chiếc xe được người tiêu dùng yêu thích', 'Một chiếc điện thoại được dùng để liên lạc'], correct: 'Một đôi giày có thể đi và cũng có thể đổi lấy gạo' },
+{ question: 'Mặt giá trị và mặt giá trị sử dụng của hàng hóa tồn tại trong', answers: ['Cùng một thời điểm nhưng không tách rời', 'Tách biệt nhau hoàn toàn', 'Cùng một hàng hóa nhưng biểu hiện riêng', 'Mỗi hàng hóa chỉ có một trong hai mặt'], correct: 'Cùng một hàng hóa nhưng biểu hiện riêng' },
+{ question: 'Lao động sản xuất ra hàng hóa có tính chất nào?', answers: ['Lao động cá biệt và giản đơn', 'Lao động cụ thể và lao động trừu tượng', 'Lao động chân tay và lao động trí óc', 'Lao động tự do và tự nhiên'], correct: 'Lao động cụ thể và lao động trừu tượng' },
+{ question: 'Lao động cụ thể tạo ra', answers: ['Giá trị hàng hóa', 'Giá trị trao đổi', 'Giá trị sử dụng của hàng hóa', 'Thị trường hàng hóa'], correct: 'Giá trị sử dụng của hàng hóa' },
+{ question: 'Lao động trừu tượng tạo ra', answers: ['Giá trị sử dụng', 'Giá trị hàng hóa', 'Sự tiêu dùng', 'Thị trường'], correct: 'Giá trị hàng hóa' },
+{ question: 'Sản phẩm nào dưới đây không phải là hàng hóa?', answers: ['Bánh mì bán ở tiệm', 'Lúa gạo để ăn trong gia đình', 'Xe máy bán ở cửa hàng', 'Quần áo bán ở chợ'], correct: 'Lúa gạo để ăn trong gia đình' },
+{ question: 'Hàng hóa sức lao động là gì?', answers: ['Là hàng hóa dùng để tái sản xuất sức lao động', 'Là toàn bộ trí lực và thể lực của con người dùng trong sản xuất', 'Là sự kết hợp của lao động cụ thể và lao động trừu tượng', 'Là sức mạnh của con người trong xã hội'], correct: 'Là toàn bộ trí lực và thể lực của con người dùng trong sản xuất' },
+{ question: 'Ai là người đầu tiên phát hiện ra tính hai mặt của hàng hóa?', answers: ['Ăng-ghen', 'Lê-nin', 'C. Mác', 'Ph. Ăng-ghen'], correct: 'C. Mác' },
+{ question: 'Khi sản xuất hàng hóa phát triển thì trao đổi hàng hóa', answers: ['Không thay đổi', 'Phát triển', 'Giảm sút', 'Bị cấm'], correct: 'Phát triển' },
+{ question: 'Sản xuất và tiêu dùng trong kinh tế hàng hóa diễn ra như thế nào?', answers: ['Diễn ra đồng thời', 'Diễn ra trong cùng một thời điểm', 'Diễn ra tách rời về không gian và thời gian', 'Diễn ra ngẫu nhiên, không theo quy luật'], correct: 'Diễn ra tách rời về không gian và thời gian' },
+{ question: 'Giá cả của hàng hóa là', answers: ['Số tiền bỏ ra để sản xuất ra hàng hóa', 'Lượng tiền tệ biểu hiện bằng giá trị của hàng hóa', 'Giá người bán muốn bán', 'Giá người mua muốn trả'], correct: 'Lượng tiền tệ biểu hiện bằng giá trị của hàng hóa' },
+{ question: 'Giá cả hàng hóa thường xuyên dao động quanh', answers: ['Giá trị sử dụng', 'Giá trị hàng hóa', 'Chi phí sản xuất', 'Nhu cầu tiêu dùng'], correct: 'Giá trị hàng hóa' },
+{ question: 'Khi tăng cường độ lao động lên 2 lần thì các nhân tố khác như thế nào?', answers: ['Tổng số sản phẩm và lượng giá trị trong một đơn vị hàng hóa cũng tăng lên 2 lần.', 'Tổng số sản phẩm tăng lên 2 lần và lượng giá trị trong một đơn vị hàng hóa cũng giảm xuống 2 lần.', 'Tổng số sản phẩm và lượng giá trị trong một đơn vị hàng hóa cũng giảm xuống 2 lần.', 'Tổng số sản phẩm tăng lên 2 lần và lượng giá trị trong một đơn vị hàng hóa không đổi.'], correct: 'Tổng số sản phẩm tăng lên 2 lần và lượng giá trị trong một đơn vị hàng hóa không đổi.' },
+{ question: 'Các nhân tố khác biến động như thế nào khi tăng cường độ lao động lên 2 lần?', answers: ['Tổng số sản phẩm, tổng giá trị sản phẩm và lượng giá trị trong một đơn vị hàng hóa cùng tăng lên 2 lần.', 'Tổng số sản phẩm, tổng giá trị sản phẩm và lượng giá trị trong một đơn vị hàng hóa cùng giảm xuống ½ lần.', 'Tổng số sản phẩm, tổng giá trị sản phẩm cùng tăng lên 2 lần và lượng giá trị trong một đơn vị hàng hóa không đổi.', 'Tổng số sản phẩm, tổng giá trị sản phẩm cùng giảm xuống ½ lần và lượng giá trị trong một đơn vị hàng hóa không đổi.'], correct: 'Tổng số sản phẩm, tổng giá trị sản phẩm cùng tăng lên 2 lần và lượng giá trị trong một đơn vị hàng hóa không đổi.' },
+{ question: 'Năng suất lao động tăng lên 2 lần làm cho', answers: ['Tổng số sản phẩm tăng 2 lần, tổng giá trị sản phẩm không đổi và lượng giá trị trong một đơn vị hàng hóa giảm xuống 2 lần.', 'Tổng số sản phẩm tăng, tổng giá trị sản phẩm giảm xuống ½ lần và lượng giá trị trong một đơn vị hàng hóa tăng lên 2 lần.', 'Tổng số sản phẩm giảm, tổng giá trị sản phẩm tăng lên 2 lần và lượng giá trị trong một đơn vị hàng hóa không đổi.', 'Tổng số sản phẩm giảm, tổng giá trị sản phẩm giảm xuống ½ lần và lượng giá trị trong một đơn vị hàng hóa không đổi.'], correct: 'Tổng số sản phẩm tăng 2 lần, tổng giá trị sản phẩm không đổi và lượng giá trị trong một đơn vị hàng hóa giảm xuống 2 lần.' },
+{ question: 'Khi đồng thời tăng năng suất lao động và cường độ lao động lên 2 lần thì', answers: ['Tổng số sản phẩm tăng lên 4 lần, lượng giá trị trong 1 đơn vị sản phẩm giảm 2 lần.', 'Tổng số sản phẩm tăng 2 lần, tổng giá trị sản phẩm tăng 2 lần.', 'Lượng giá trị trong một đơn vị hàng hóa giảm 2 lần, tổng giá trị sản phẩm tăng 2 lần.', 'Tổng số sản phẩm tăng 2 lần, lượng giá trị trong một đơn vị hàng hóa giảm 2 lần.'], correct: 'Tổng số sản phẩm tăng lên 4 lần, lượng giá trị trong 1 đơn vị sản phẩm giảm 2 lần.' },
+{ question: 'Điểm giống nhau khi tăng năng suất lao động và cường độ lao động là gì?', answers: ['Lượng giá trị trong một đơn vị hàng hóa giảm.', 'Lượng giá trị trong một đơn vị hàng hóa tăng.', 'Lượng giá trị trong một đơn vị hàng hóa không đổi.', 'Tổng số sản phẩm tăng.'], correct: 'Tổng số sản phẩm tăng.' },
+{ question: 'Nhân tố cơ bản, lâu dài để tăng sản phẩm cho xã hội là', answers: ['Tăng năng suất lao động.', 'Tăng số người lao động.', 'Tăng cường độ lao động.', 'Kéo dài thời gian lao động.'], correct: 'Tăng năng suất lao động.' },
+{ question: 'Lao động giản đơn là gì?', answers: ['Lao động không phải trải qua huấn luyện, đào tạo, lao động thành thạo.', 'Lao động xã hội cần thiết.', 'Lao động trừu tượng.', 'Lao động thủ công.'], correct: 'Lao động không phải trải qua huấn luyện, đào tạo, lao động thành thạo.' },
+{ question: 'Lao động phức tạp là', answers: ['Lao động trải qua huấn luyện, đào tạo, lao động thành thạo.', 'Lao động xã hội cần thiết.', 'Lao động trừu tượng.', 'Lao động thủ công.'], correct: 'Lao động trải qua huấn luyện, đào tạo, lao động thành thạo.' },
+{ question: 'Mức độ phức tạp của lao động thể hiện điều gì?', answers: ['Trong cùng một thời gian, một hoạt động lao động phức tạp sẽ tạo ra được nhiều lượng giá trị so với lao động giản đơn.', 'Lao động phức tạp là lao động phải qua huấn luyện, đào tạo.', 'Lao động phức tạp và lao động giản đơn đều là sự thống nhất của mặt cụ thể và mặt trừu tượng.', 'Quy lao động phức tạp thành lao động giản đơn.'], correct: 'Trong cùng một thời gian, một hoạt động lao động phức tạp sẽ tạo ra được nhiều lượng giá trị so với lao động giản đơn.' },
+{ question: 'Vì sao hàng hóa có hai thuộc tính giá trị và giá trị sử dụng?', answers: ['Lao động sản xuất hàng hóa có tính hai mặt : lao động cụ thể và lao động trừu tượng.', 'Lao động sản xuất hàng hóa có mục đích để trao đổi, mua bán.', 'Lao động sản xuất hàng hóa có hai loại lao động phức tạp và lao động giản đơn.', 'Lao động sản xuất hàng hóa có tính chất tư nhân và xã hội.'], correct: 'Lao động sản xuất hàng hóa có tính hai mặt : lao động cụ thể và lao động trừu tượng.' },
+{ question: 'Sự tách rời giữa lao động cụ thể và lao động trừu tượng chỉ có trong nền sản xuất nào?', answers: ['Sản xuất hàng hóa.', 'Sản xuất tự cấp, tự túc.', 'Sản xuất nô lệ.', 'Sản xuất nhỏ.'], correct: 'Sản xuất hàng hóa.' },
+{ question: 'Sản phẩm lao động trong sản xuất hàng hóa có đặc điểm gì?', answers: ['Là hàng hóa, có hai thuộc tính: giá trị và giá trị sử dụng.', 'Là vật phẩm có giá trị trao đổi.', 'Là vật phẩm phục vụ nhu cầu bản thân.', 'Là sản phẩm có giá trị sử dụng cao.'], correct: 'Là hàng hóa, có hai thuộc tính: giá trị và giá trị sử dụng.' },
+{ question: 'Giá trị của hàng hóa là gì?', answers: ['Là lao động xã hội của người sản xuất hàng hóa kết tinh trong hàng hóa.', 'Là lao động cụ thể của người sản xuất hàng hóa.', 'Là tổng chi phí sản xuất để làm ra hàng hóa.', 'Là lượng nguyên liệu vật chất hao phí.'], correct: 'Là lao động xã hội của người sản xuất hàng hóa kết tinh trong hàng hóa.' },
+{ question: 'Yếu tố quyết định lượng giá trị của hàng hóa là:', answers: ['Thời gian lao động xã hội cần thiết.', 'Thời gian lao động cá biệt.', 'Chi phí sản xuất.', 'Giá trị trao đổi.'], correct: 'Thời gian lao động xã hội cần thiết.' },
+{ question: 'Thời gian lao động xã hội cần thiết là gì?', answers: ['Là thời gian cần thiết để sản xuất ra một hàng hóa trong điều kiện bình thường của xã hội.', 'Là thời gian người lao động thực tế làm ra hàng hóa.', 'Là thời gian tính toán chi phí sản xuất.', 'Là thời gian lập kế hoạch sản xuất.'], correct: 'Là thời gian cần thiết để sản xuất ra một hàng hóa trong điều kiện bình thường của xã hội.' },
+{ question: 'Giá trị sử dụng của hàng hóa là gì?', answers: ['Là công dụng của vật phẩm thỏa mãn nhu cầu nào đó của con người.', 'Là khả năng trao đổi lấy hàng hóa khác.', 'Là phần lợi nhuận khi bán hàng hóa.', 'Là chi phí tạo ra hàng hóa.'], correct: 'Là công dụng của vật phẩm thỏa mãn nhu cầu nào đó của con người.' },
+{ question: 'Điều kiện ra đời của sản xuất và trao đổi hàng hóa là:', answers: ['Phân công lao động xã hội và sự tách biệt tương đối về kinh tế giữa những người sản xuất.', 'Sản xuất hàng hóa để bán.', 'Có thị trường rộng lớn.', 'Có người mua và người bán.'], correct: 'Phân công lao động xã hội và sự tách biệt tương đối về kinh tế giữa những người sản xuất.' },
+{ question: 'Hàng hóa sức lao động là gì?', answers: ['Là khả năng lao động của con người được bán cho người khác.', 'Là người lao động làm thuê.', 'Là hàng hóa đặc biệt.', 'Là dịch vụ lao động chân tay.'], correct: 'Là khả năng lao động của con người được bán cho người khác.' },
+{ question: 'Hàng hóa sức lao động được bán trong điều kiện nào?', answers: ['Người lao động tự do về thân thể và không có tư liệu sản xuất.', 'Người lao động có kỹ năng cao.', 'Thị trường có nhu cầu lao động.', 'Có hợp đồng lao động.'], correct: 'Người lao động tự do về thân thể và không có tư liệu sản xuất.' },
+{ question: 'Thách thức của toàn cầu hóa kinh tế là:', answers: ['Gia tăng bất bình đẳng, khủng hoảng lan truyền, mất bản sắc văn hóa.', 'Chỉ gia tăng bất bình đẳng.', 'Chỉ khủng hoảng lan truyền.', 'Chỉ mất bản sắc văn hóa.'], correct: 'Gia tăng bất bình đẳng, khủng hoảng lan truyền, mất bản sắc văn hóa.' },
+{ question: 'Một trong những xu hướng vận động của các quốc gia hiện nay là:', answers: ['Hội nhập quốc tế.', 'Bế quan tỏa cảng.', 'Tự cấp tự túc.', 'Chỉ tập trung vào thị trường nội địa.'], correct: 'Hội nhập quốc tế.' },
+{ question: 'Hội nhập kinh tế quốc tế giúp Việt Nam như thế nào?', answers: ['Tăng trưởng kinh tế, thu hút đầu tư, tạo việc làm.', 'Giảm chi tiêu quốc phòng.', 'Cắt giảm trợ cấp xã hội.', 'Tăng chi tiêu công.'], correct: 'Tăng trưởng kinh tế, thu hút đầu tư, tạo việc làm.' },
+{ question: 'Nguyên nhân cơ bản làm xuất hiện sản xuất hàng hóa là:', answers: ['Phân công lao động xã hội và sự tách biệt tương đối giữa những người sản xuất.', 'Cạnh tranh trong thương mại.', 'Chính sách bảo hộ.', 'Nhu cầu xuất khẩu.'], correct: 'Phân công lao động xã hội và sự tách biệt tương đối giữa những người sản xuất.' },
+{ question: 'Đâu là đặc điểm của giá trị hàng hóa?', answers: ['Là thuộc tính xã hội, biểu hiện gián tiếp thông qua trao đổi.', 'Là thuộc tính tự nhiên của sản phẩm.', 'Phụ thuộc vào thị hiếu người tiêu dùng.', 'Không liên quan đến lao động.'], correct: 'Là thuộc tính xã hội, biểu hiện gián tiếp thông qua trao đổi.' },
+{ question: 'Hàng hóa có giá trị khi nào?', answers: ['Khi có lao động của con người kết tinh trong đó.', 'Khi có giá thành cao.', 'Khi có thương hiệu mạnh.', 'Khi có tính khan hiếm.'], correct: 'Khi có lao động của con người kết tinh trong đó.' },
+{ question: 'Quan hệ hàng hóa – tiền tệ là gì?', answers: ['Quan hệ mua – bán trong nền kinh tế hàng hóa.', 'Quan hệ đầu tư tài chính.', 'Quan hệ chi tiêu ngân sách.', 'Quan hệ sản xuất nông nghiệp.'], correct: 'Quan hệ mua – bán trong nền kinh tế hàng hóa.' },
+{ question: 'Tiền tệ có nguồn gốc từ:', answers: ['Trao đổi hàng hóa.', 'Lao động phức tạp.', 'Dịch vụ ngân hàng.', 'Tín dụng quốc tế.'], correct: 'Trao đổi hàng hóa.' },
+{ question: 'Đặc trưng của sản xuất hàng hóa là gì?', answers: ['Sản xuất để trao đổi mua bán.', 'Sản xuất tự cung tự cấp.', 'Sản xuất theo kế hoạch tập trung.', 'Không phụ thuộc vào thị trường.'], correct: 'Sản xuất để trao đổi mua bán.' },
+{ question: 'Giá trị trao đổi là:', answers: ['Tỷ lệ trao đổi giữa các hàng hóa với nhau.', 'Giá bán của hàng hóa.', 'Chi phí sản xuất.', 'Lợi nhuận thu được.'], correct: 'Tỷ lệ trao đổi giữa các hàng hóa với nhau.' },
+{ question: 'Giá cả hàng hóa phụ thuộc vào những yếu tố nào?', answers: ['Giá trị, cung cầu, cạnh tranh, chính sách.', 'Chi phí sản xuất và thuế.', 'Lợi nhuận và thương hiệu.', 'Thị hiếu và quảng cáo.'], correct: 'Giá trị, cung cầu, cạnh tranh, chính sách.' },
+{ question: 'Các yếu tố nào cấu thành thị trường?', answers: ['Hàng hoá, tiền tệ, người bán', 'Hàng hoá, tiền tê, người sản xuất', 'Hàng hoá, tiền tê, người mua, người bán', 'Hàng hoá, tiền tệ, nguời mua, người bán, pháp luât'], correct: 'Hàng hoá, tiền tê, người mua, người bán' },
+{ question: 'Biểu hiện của thị trường chợ truyền thống là', answers: ['Nơi người mua và người bán trực tiếp thoả thuận giá cả của hàng hoá.', 'Nơi người mua được lựa chọn và so sánh giá cả của hàng hoá.', 'Nơi người bán quyết định giá cả, người mua chỉ được quyền chọn lựa.', 'Nơi người mua được quyền quyết định giá cả của hàng hoá.'], correct: 'Nơi người mua và người bán trực tiếp thoả thuận giá cả của hàng hoá.' },
+{ question: 'Thị trường chợ online có biểu hiện nào?', answers: ['Nơi người mua và người bán trực tiếp thoả thuân giá cả của hàng hoá', 'Nơi người mua được lựa chọn và so sánh giá cả của hàng hoá', 'Nơi người bán quyết định giá cả, người mua chỉ được quyền chọn lựa', 'Nơi người mua được quyền quyết định giá cả của hàng hoá'], correct: 'Nơi người mua được lựa chọn và so sánh giá cả của hàng hoá' },
+{ question: 'Biểu hiện nào thể hiện thị trường siêu thị?', answers: ['Nơi người mua và nguời bán trực tiếp thỏa thuận giá cả của hàng hoá', 'Nơi người mua được lựa chọn và so sánh giá cả của hàng hoá', 'Nơi người bán quyết định giá cả, người mua chỉ được quyền chọn lựa', 'Nơi người mua được quyền quyết định giá cả của hàng hoá'], correct: 'Nơi người bán quyết định giá cả, người mua chỉ được quyền chọn lựa' },
+{ question: 'Biểu hiện của thị trường chứng khoán là', answers: ['Người mua và người bán đều phải thông qua môi giới trung gian.', 'Nơi người mua được lựa chon và so sánh giá cả của hàng hoá.', 'Nơi người bán quyết định giá cả, người mua chỉ được quyền chọn lựa.', 'Nơi người mua được quyền quyết định giá cả của hàng hoá.'], correct: 'Người mua và người bán đều phải thông qua môi giới trung gian.' },
+{ question: 'Tiêu thức phân chia thị trường tư liệu sản xuất và thị trường tư liệu tiêu dùng dựa vào căn cứ nào?', answers: ['Đối tượng hàng hoá đưa ra trao đổi, mua bán', 'Vai trò của các yếu tố được trao đổi, mua bán', 'Đầu vào, đầu ra của quá trình sản xuất', 'Tính chất và cơ chế vận hành của thị trường'], correct: 'Vai trò của các yếu tố được trao đổi, mua bán' },
+{ question: 'Tiêu thức phân chia thị trường trong nước và thị trường thế giới căn cứ vào', answers: ['Đối tượng hàng hoá đưa ra trao đổi, mua bán.', 'Phạm vi các quan hệ.', 'Đầu vào, đầu ra của quá trình sản xuất.', 'Tính chất và cơ chế vân hành của thị trường.'], correct: 'Phạm vi các quan hệ.' },
+{ question: 'Dựa vào căn cứ nào để phân chia thị trường hàng hoá và thị trường dịch vụ?', answers: ['Đối tượng hàng hoá đưa ra trao đổi, mua bán', 'Căn cứ vào tính chuyên biệt của thị trường', 'Đầu vào, đầu ra của quá trình sản xuất', 'Tính chất và cơ chế vận hành của thị trường'], correct: 'Đối tượng hàng hoá đưa ra trao đổi, mua bán' },
+{ question: 'Tiêu thức phân chia thành thị trường tự do và thị trường có điều tiết cǎn cứ vào', answers: ['Đối tượng hàng hoá đưa ra trao đổi, mua bán.', 'Tính chuyên biệt của thị trường.', 'Đầu vào, đầu ra của quá trình sản xuất.', 'Tính chất và cơ chế vận hành của thị trường.'], correct: 'Tính chất và cơ chế vận hành của thị trường.' },
+{ question: 'Vai trò chủ yếu của thị trường là gì?', answers: ['Thực hiện giá trị hàng hoá, kích thích sự sáng tạo, tạo ra cách thức phân bổ nguồn lực hiệu quả trong nền kinh tế và gắn kết nền kinh tế thành một chỉnh thể', 'Thực hiện giá trị hàng hoá, kích thích sự sáng tạo và tạo ra cách thức phân bổ nguồn lực hiệu quả trong nền kinh tế', 'Kích thích sự sáng tao và tạo ra cách thức phân bố nguồn lực hiêu qua trong nền kinh tế, gắn kết nền kinh tế thành một chỉnh thể', 'Thực hiện giá trị hàng hoá và gắn kết nền kinh tế thành một chỉnh thể'], correct: 'Thực hiện giá trị hàng hoá, kích thích sự sáng tạo, tạo ra cách thức phân bổ nguồn lực hiệu quả trong nền kinh tế và gắn kết nền kinh tế thành một chỉnh thể' },
+{ question: 'Cơ chế thị trường là', answers: ['Sự kết hợp các yếu tố khách quan và chủ quan.', 'Sự kết hợp giữa sự tự do của cá nhân và điều tiết của nhà nước.', 'Hệ thống các quan hệ mang tính tự điều chỉnh tuân theo yêu cầu của các quy luật kinh tế.', 'Hệ thống các quan hệ mang tính tự phát tuân theo yêu cầu của các quy luật kinh tế.'], correct: 'Hệ thống các quan hệ mang tính tự điều chỉnh tuân theo yêu cầu của các quy luật kinh tế.' },
+{ question: 'Cơ chế thị trường là một kiểu cơ chế vận hành', answers: ['Mang tính chủ quan.', 'Mang tính khách quan.', 'Do tác động chính sách pháp luật của nhà nước.', 'Tǎng hiệu quả nền kinh tế.'], correct: 'Mang tính khách quan.' },
+{ question: 'Kinh tế thị trường là giai đoạn phát triển cao của nền kinh tế nào?', answers: ['Kinh tế tự nhiên', 'Kinh tế hàng hoá', 'Kinh tế tư bản chủ nghĩa', 'Kinh tế hàng hoá giản đơn'], correct: 'Kinh tế hàng hoá' },
+{ question: 'Ưu thế của nền kinh tế thị trường là gì?', answers: ['Luôn tạo động lực cho chủ thể kinh tế, phát huy tốt tiềm năng của mọi chủ thể kinh tế và tạo ra sự đa dạng các chủ thể kinh tế', 'Luôn tạo động lực cho chủ thể kinh tế, thị trường đóng vai trò quyết định trong việc phân bổ các nguồn lực và tạo ra các phương thức để thoả mān tối đa nhu cầu của con người', 'Luôn tạo động lực cho chủ thể kinh tế, phát huy tốt tiềm năng của mọi chủ thể kinh tế và tạo ra các phương thức để thoả mãn tối đa nhu cầu của con người', 'Đóng vai trò quyết định trong việc phân bổ các nguồn lực và tạo ra các phương thức để thoả mân tối đa nhu cầu của con người'], correct: 'Luôn tạo động lực cho chủ thể kinh tế, thị trường đóng vai trò quyết định trong việc phân bổ các nguồn lực và tạo ra các phương thức để thoả mān tối đa nhu cầu của con người' },
+{ question: 'Đặc trưng phổ biến của nền kinh tế thị trường là', answers: ['Có sự đa dạng của các chủ thể kinh tế, nhiều hình thức sở hữu; thị trường đóng vai trò quyết định trong việc phân bổ các nguồn lực xã hội; giá cả được hình thành theo nguyên tắc thị trường; là nền kinh tế mở.', 'Có sự đa dạng của các chủ thể kinh tế, nhiều hình thức sở hữu; thị trường đóng vai trò quyết định trong việc phân bổ các nguồn lực xã hội; giá cả được hình thành theo nguyên tắc thị trường; là nền kinh tế đóng.', 'Có sự đa dạng của các chủ thể kinh tế, nhiều hình thức sở hữu; nhà nước đóng vai trỏ quyết định trong việc phân bổ các nguồn lực xã hội; giá cả được hình thành theo nguyên tắc thị trường; là nền kinh tế mở.', 'Có sự đa dạng của các chủ thể kinh tế, nhiều hình thức sở hữu; thị trường đóng vai trò quyết định trong việc phân bổ các nguồn lực xã hội; giá cả được hình thành theo quy luật cung - cầu; là nền kinh tế mở.'], correct: 'Có sự đa dạng của các chủ thể kinh tế, nhiều hình thức sở hữu; thị trường đóng vai trò quyết định trong việc phân bổ các nguồn lực xã hội; giá cả được hình thành theo nguyên tắc thị trường; là nền kinh tế mở.' },
+{ question: 'Những khuyết tật của nền kinh tế thị trường là gì?', answers: ['Tiềm ần rùi ro khủng hoảng; phân hoá sâu sắc trong xã hội; xu hướng sử dụng hợp lí tài nguyên không thể tái tao được', 'Tiềm ần rủi ro khủng hoảng; xu hướng cạn kiệt tài nguyên không thể tái tạo được; phân hoá sâu sắc trong xã hội', 'Tiềm ần rủi ro khủng hoảng; tạo lập sự công bằng trong xã hội; xu hướng cạn kiệt tài nguyên không thể tái tạo được', 'Tiềm ần rủi ro khủng hoảng; phân hoá sâu sắc trong xã hội; xu hướng phân bố hợp lí tài nguyên không thể tái tạo được'], correct: 'Tiềm ần rủi ro khủng hoảng; xu hướng cạn kiệt tài nguyên không thể tái tạo được; phân hoá sâu sắc trong xã hội' },
+{ question: 'Quy luật giá trị là quy luật kinh tế cơ bản của', answers: ['Mọi nền sản xuất.', 'Sản xuất hàng hoá.', 'Chủ nghĩa tư bản.', 'Chủ nghĩa xã hội.'], correct: 'Sản xuất hàng hoá.' },
+{ question: 'Quy luât giá trị tồn tại trong', answers: ['Nền sản xuất tư bản chủ nghĩa.', 'Nền sản xuất xã hội chủ nghĩa.', 'Nền sản xuất hàng hoá.', 'Mọi nền sản xuất.'], correct: 'Nền sản xuất hàng hoá.' },
+{ question: 'Quy luật giá trị yêu cầu sản xuất và trao đổi hàng hoá phải tiến hanh trên cơ sở nào?', answers: ['Hao phí lao động xã hội cần thiết', 'Hao phí lao động cá biệt', 'Hao phí lao động tư nhân', 'Hao phí lao dông cụ thể'], correct: 'Hao phí lao động xã hội cần thiết' },
+{ question: 'Quy luật giá trị yêu cầu người sản xuất phải đảm bảo', answers: ['Hao phí lao động cá biệt nhỏ hơn hoặc bằng hao phí lao động xã hội cần thiết.', 'Hao phí lao động cá biệt lớn hơn hao phí lao động xã hội cần thiết.', 'Hao phí lao động cá biệt nhỏ hơn hao phí lao động xã hội cần thiết.', 'Hao phí lao động cá biệt bằng hao phí lao động xã hội cần thiết.'], correct: 'Hao phí lao động cá biệt nhỏ hơn hoặc bằng hao phí lao động xã hội cần thiết.' },
+{ question: 'Người sản xuất vi phạm quy luật giá trị trong trường hợp nào?', answers: ['Thời gian lao động cá biệt bằng thời gian lao động xã hội cần thiết', 'Thời gian lao động cá biệt lớn hơn thời gian lao động xã hội cần thiết', 'Thời gian lao động cá biệt nhỏ hơn thời gian lao động xã hội cần thiết', 'Thời gian lao động cá biệt lớn hơn hoặc nhỏ hơn thời gian lao động xã hội cần thiết'], correct: 'Thời gian lao động cá biệt lớn hơn thời gian lao động xã hội cần thiết' },
+{ question: 'Cơ chế vận động của quy luật giá trị biểu hiện', answers: ['Giá cả bằng giá tri hàng hoá', 'Giá cả hàng hoá lên xuống xung quanh giá trị hàng hoá', 'Cung-cầu về hàng hoá', 'Sự cạnh tranh giữa các loại hàng hoá'], correct: 'Giá cả hàng hoá lên xuống xung quanh giá trị hàng hoá' },
+{ question: 'Biểu hiện nào thể hiên su hoạt đông cua quy luat giá trị thang du?', answers: ['Sự lên xuống của tiền tệ', 'Sự vận động của giá cả xung quanh giá trị', 'Cơ chế cạnh tranh của hàng hoá', 'Sự cạnh tranh giữa các chủ thể sản xuất'], correct: 'Sự vận động của giá cả xung quanh giá trị' },
+{ question: 'Quy luật giá trị điều tiết sản xuất, có nghĩa là', answers: ['Điều hoà, phân bổ tư liệu sản xuất và sức lao dông.', 'Cung úng hàng hoá cho sản xuất.', 'Quy mô sản xuất.', 'Quản lí các ngành san xuất.'], correct: 'Điều hoà, phân bổ tư liệu sản xuất và sức lao dông.' },
+{ question: 'Quy luât giá trị điều tiết lưu thông, có nghĩa là hàng hoá vận động từ nơi', answers: ['Có giá thấp đến nơi có giá cao.', 'Có giá cao đến nơi có giá thấp.', 'Có giá cao đến nơi có giá cao.', 'Có giá thấp đến nơi có giá thấp.'], correct: 'Có giá thấp đến nơi có giá cao.' },
+{ question: 'Yếu tố nào làm ảnh hưởng đến giá cả hàng hoá?', answers: ['Giá trị của hàng hoá, quy luật cung - cầu, quy luật cạnh tranh và giá trị của tiền tệ.', 'Giá trị sử dụng của hàng hoá, quy luât cung - cầu, quy luật canh tranh và giá trị của tiền tệ', 'Giá trị trao đổi của hàng hoá, quy luật cung - cầu, quy luật cạnh tranh và giá trị của tiền tê', 'Số lượng hàng hoá trên thị trường, quy luật cung – cầu, quy luật cạnh tranh và giá trị của tiền tệ.'], correct: 'Giá trị của hàng hoá, quy luật cung - cầu, quy luật cạnh tranh và giá trị của tiền tệ.' },
+{ question: 'Một trong những tác động tích cực của quy luật giá trị là', answers: ['Nguời sản xuất có thể sản xuất nhiều loại hàng hoá.', 'Người tiêu dùng mua được hàng hoá rẻ.', 'Người sản xuất ngày càng giàu có.', 'Kích thích lực lượng sản xuất, năng suất lao động tăng.'], correct: 'Kích thích lực lượng sản xuất, năng suất lao động tăng.' },
+{ question: 'Một trong những tác động tiêu cực của quy luật giá trị là gì?', answers: ['Phân hoá giàu, nghèo giữa nhũng nguời sản xuất hàng hoá', 'Làm cho giá tri hàng hoá giảm xuống', 'Làm cho chi phí sản xuất hàng hoá tăng lên', 'Làm cho hàng hoá phân phối không đều giữa các vùng'], correct: 'Phân hoá giàu, nghèo giữa nhũng nguời sản xuất hàng hoá' },
+{ question: 'Quy luật cung - cầu là quy luật kinh tế điều tiết quan hệ giữa', answers: ['Cung và cầu hàng hoá trên thị trường.', 'Người bán hàng hoá với nhau.', 'Các chủ thể sản xuất hàng hoá với nhau.', 'Người tiêu dùng với nhau.'], correct: 'Cung và cầu hàng hoá trên thị trường.' },
+{ question: 'Khi cung = cầu thì giá cả hàng hoá như thế nào?', answers: ['Giá cả = giá tri', 'Giá cả > giá trị', 'Giá cả < giá trị', 'Giá cả vận động xoay quanh giá trị'], correct: 'Giá cả = giá tri' },
+{ question: 'Khi cung > cầu thì', answers: ['Giá cả = giá trị.', 'Giá cả > giá trị.', 'Giá cả < giá trị.', 'Giá cả vận động xoay quanh giá trị.'], correct: 'Giá cả < giá trị.' },
+  { question: 'Giá cả hàng hoá được thể hiện như thế nào khi cung < cầu?', answers: ['Giá cả = giá trị', 'Giá cả > giá trị', 'Giá cả < giá trị', 'Giá cả vận động xoay quanh giá trị'], correct: 'Giá cả > giá trị' },
+  { question: 'Khẳng định nào sau đây thể hiện đúng mối quan hệ giữa giá cả và giá trị?', answers: ['Giá trị là cơ sở của giá cả, là yếu tố quyết định của giá cả', 'Giá trị là hình thức biểu hiện bằng tiền của giá cả', 'Giá cả còn chịu ảnh hưởng của quy luật cung - cầu và giá trị của tiền', 'Giá cả còn chịu ảnh hưởng của quy luật cạnh tranh và giá trị của tiền'], correct: 'Giá trị là cơ sở của giá cả, là yếu tố quyết định của giá cả' },
+  { question: 'Khi giá cả hàng hoá tăng lên thì cung - cầu sẽ thay đổi như thế nào?', answers: ['Cung tǎng, cầu giảm', 'Cung giảm, cầu tǎng', 'Cung tǎng, cầu tǎng', 'Cung giảm, cầu giảm'], correct: 'Cung tǎng, cầu giảm' },
+  { question: 'Khi giá cả hàng hoá giảm thì cung - cầu sẽ thay đổi như thế nào?', answers: ['Cung tǎng, cầu giảm', 'Cung giảm, cầu tǎng', 'Cung tǎng, cầu tǎng', 'Cung giảm, cầu giảm'], correct: 'Cung giảm, cầu tǎng' },
+  { question: 'Thực chất của quan hệ cung - cầu là mối quan hệ giữa', answers: ['Nhà nước với doanh nghiệp.', 'Người mua với người bán.', 'Người kinh doanh với nhà nước.', 'Doanh nghiệp với doanh nghiệp.'], correct: 'Người mua với người bán.' },
+  { question: 'Quy luật lưu thông tiền tệ xác định', answers: ['Lượng tiền tệ cần thiết cho lưu thông trong một thời gian nhất định.', 'Lượng tiền làm chức nǎng mua bán.', 'Lượng tiền làm chức năng cất trữ.', 'Lượng tiền làm chức năng phương tiện lưu thông.'], correct: 'Lượng tiền tệ cần thiết cho lưu thông trong một thời gian nhất định.' },
+  { question: 'Quy luật cạnh tranh là quy luật kinh tế ...(1)... một cách...(2)... mối quan hệ ...(3)... kinh tế giữa các chủ thể trong sản xuất và trao đổi hàng hoá.', answers: ['(1) điều tiết, (2) khách quan, (3) cạnh tranh', '(1) điều tiết, (2) khách quan, (3) ganh đua', '(1) điều tiết, (2) chủ quan, (3) ganh đua', '(1) phân bổ, (2) khách quan, (3) ganh đua'], correct: '(1) điều tiết, (2) khách quan, (3) ganh đua' },
+  { question: 'Mục đích của cạnh tranh là gì?', answers: ['Thu được lợi ích tối đa', 'Mua bán hàng hoá với giá cả có lợi nhất', 'Giành các điều kiện sản xuất thuận lợi nhất', 'Sản xuất ra nhiều hàng hoá nhất'], correct: 'Thu được lợi ích tối đa' },
+  { question: 'Cạnh tranh trong nội bộ ngành dựa trên', answers: ['Trình độ tay nghề công nhân, trang thiết bị kĩ thuật, công nghệ và phân bổ các nguồn lực kinh tế.', 'Trình độ tay nghề công nhân, đào thải các nhân tổ lạc hậu và khả năng tổ chức quản lí.', 'Trình độ tay nghề công nhân, trang thiết bị kĩ thuật, công nghệ và khả nǎng tổ chức quản lí.', 'Trình độ tay nghề công nhân, trang thiết bị kĩ thuật, công nghệ và đào thải các nhân tố lạc hậu.'], correct: 'Trình độ tay nghề công nhân, trang thiết bị kĩ thuật, công nghệ và khả nǎng tổ chức quản lí.' },
+  { question: 'Mục đích của cạnh tranh trong nội bộ ngành là gì?', answers: ['Nhằm thu nhiều lợi nhuận nhất', 'Nhằm mua bán hàng hoá với giá cả có lợi nhất', 'Đổi mới công nghệ', 'Thu được lợi nhuận siêu ngạch'], correct: 'Thu được lợi nhuận siêu ngạch' },
+  { question: 'Kết quả của cạnh tranh trong nội bộ ngành hình thành', answers: ['Giá trị thị trường.', 'Giá trị hàng hoá', 'Giá trị cá biệt hàng hoá.', 'Giá cả thị trường.'], correct: 'Giá trị thị trường.' },
+  { question: 'Cạnh tranh giữa các ngành xảy ra khi có sự khác nhau về', answers: ['Cung, cầu các loại hàng hoá.', 'Lợi nhuận.', 'Tỉ suất lợi nhuận.', 'Giá trị trao đổi của hàng hoá.'], correct: 'Tỉ suất lợi nhuận.' },
+  { question: 'Cạnh tranh giữa các ngành có mục đích gì?', answers: ['Thu nhiều lợi nhuận nhất', 'Nhằm mua bán hàng hoá với giá cả có lợi nhất', 'Đổi mới công nghệ', 'Tìm nơi đầu tư có lợi hơn'], correct: 'Tìm nơi đầu tư có lợi hơn' },
+  { question: 'Mục đích của việc cạnh tranh giữa các ngành là', answers: ['Tìm nơi đầu tư có lợi nhất.', 'Thu lợi nhuận siêu ngạch.', 'Thu lợi nhuận tối đa.', 'Thu lợi nhuận độc quyền.'], correct: 'Tìm nơi đầu tư có lợi nhất.' },
+  { question: 'Kết quả của cạnh tranh giữa các ngành là', answers: ['Nhằm thu nhiều lợi nhuận nhất và hình thành tỉ suất lợi nhuận bình quân.', 'Hình thành tỉ suất lợi nhuận bình quân và tư bản tự do di chuyển nguồn lực từ ngành này sang ngành khác.', 'Nhằm thu nhiều lợi nhuận nhất và tư bản tự do di chuyển nguồn lực từ ngành này sang ngành khác.', 'Nhằm thu nhiều lợi nhuận nhất và tự do di chuyển hàng hoá từ ngành này sang ngành khác.'], correct: 'Hình thành tỉ suất lợi nhuận bình quân và tư bản tự do di chuyển nguồn lực từ ngành này sang ngành khác.' },
+  { question: 'Nội dung nào dưới đây thể hiện mặt tích cực của cạnh tranh?', answers: ['Bảo vệ môi trường tự nhiên', 'Đa dạng hoá các quan hệ kinh tế', 'Thúc đẩy sự phát triển nền kinh tế thị trường', 'Nâng cao chất lượng cuộc sống'], correct: 'Thúc đẩy sự phát triển nền kinh tế thị trường' },
+  { question: 'Loại cạnh tranh được đánh giá là động lực của nền kinh tế là', answers: ['Cạnh tranh trong nội bộ ngành.', 'Cạnh tranh lành mạnh.', 'Cạnh tranh giữa các ngành.', 'Cạnh tranh giữa người bán và người mua, cạnh tranh không lành mạnh.'], correct: 'Cạnh tranh lành mạnh.' },
+  { question: 'Người sản xuất kinh doanh thường xuyên cải tiến máy móc hiện đại và nâng cao trình độ chuyên môn cho người lao động, điều này thể hiện', answers: ['Kích thích lực lượng sản xuất phát triển.', 'Khai thác tối đa mọi nguồn lực của đất nước.', 'Thúc đẩy tăng trưởng kinh tế, hội nhập kinh tế quốc tế.', 'Góp phần ổn định thị trường hàng hoá.'], correct: 'Kích thích lực lượng sản xuất phát triển.' },
+  { question: 'Nguyên nhân dẫn đến cạnh tranh trong sản xuất và lưu thông hàng hoá xuất phát từ đâu?', answers: ['Sự tồn tại nhiều chủ sở hữu', 'Sự gia tăng sản xuất hàng hoá', 'Nguồn lao động dồi dào trong xã hội', 'Sự thay đổi cung, cầu'], correct: 'Sự tồn tại nhiều chủ sở hữu' },
+  { question: 'Để phân biệt cạnh tranh lành mạnh và cạnh tranh không lành mạnh cần dựa vào những tiêu chí', answers: ['Tính đạo đức, tính pháp luật.', 'Tính truyền thống, tính nhân văn.', 'Tính hiện đại, tính pháp luật.', 'Tính đạo đức, tính nhân văn.'], correct: 'Tính đạo đức, tính pháp luật.' },
+  { question: 'Một trong những mặt hạn chế của cạnh tranh là gì?', answers: ['Làm cho cung lớn hơn cầu', 'Gây tổn hại đến môi trường kinh doanh', 'Tiền giấy khan hiếm trên thị trường', 'Gây ra hiện tượng lạm phát'], correct: 'Gây tổn hại đến môi trường kinh doanh' },
+  { question: 'Mạng di động A khuyến mãi giảm 50% giá trị thẻ nạp, một tuần sau mạng di động B và C cũng đưa ra chương trình khuyến mãi tương tự. Hiện tượng này phản ánh quy luật nào của thị trường?', answers: ['Quy luật cung – cầu', 'Quy luật cạnh tranh', 'Quy luật lưu thông tiền tệ', 'Quy luật giá trị'], correct: 'Quy luật cạnh tranh' },
+  { question: 'Vai trò cơ bản nhất của người sản xuất khi tham gia vào thị trường là gì?', answers: ['Định hướng sản xuất', 'Trực tiếp tạo ra của cải vật chất, sản phẩm cho xã hội để phục vụ tiêu dùng', 'Kết nối thông tin trong quan hệ mua, bán', 'Tìm kiếm lợi ích kinh tế cho mình'], correct: 'Trực tiếp tạo ra của cải vật chất, sản phẩm cho xã hội để phục vụ tiêu dùng' },
+  { question: 'Vai trò quan trọng nhất của người tiêu dùng khi tham gia vào thị trường là gì?', answers: ['Định hướng sản xuất', 'Định hướng tiêu dùng', 'Điều tiết cung - cầu hàng hoá', 'Tìm kiếm lợi ích cho mình'], correct: 'Định hướng sản xuất' },
+  { question: 'Vai trò cơ bản nhất của các chủ thể trung gian khi tham gia vào thị trường là gì?', answers: ['Định hướng sản xuất', 'Điều tiết cung cầu hàng hoá', 'Kết nối thông tin trong quan hệ mua, bán', 'Tìm kiếm lợi ích kinh tế cho mình'], correct: 'Kết nối thông tin trong quan hệ mua, bán' },
+  { question: 'Vai trò kinh tế của nhà nước trong nền kinh tế thị trường là', answers: ['Định hướng sản xuất, tiêu dùng trong thị trường.', 'Quản lí nhà nước về kinh tế, khắc phục những khuyết tật của thị trường.', 'Kết nối thông tin trong quan hệ mua, bán.', 'Điều tiết cung cầu hàng hoá.'], correct: 'Quản lí nhà nước về kinh tế, khắc phục những khuyết tật của thị trường.' }
+
+
+];
+
+let currentQuestionIndex = 0;
+let score = 0;
+let answered = false;
+let autoNextTimeout = null;
+
+const questionEl = document.getElementById('question');
+const answersEl = document.getElementById('answers');
+const progressEl = document.getElementById('progress');
+const resultEl = document.getElementById('result');
+const quizContainer = document.getElementById('quiz-container');
+
+const optionLetters = ['A', 'B', 'C', 'D'];
+const optionColors = {
+A: '#D0E8FF',
+B: '#D4EDDA',
+C: '#FFE5B4',
+D: '#F8D7DA',
+};
+
+function loadQuestion() {
+clearTimeout(autoNextTimeout);
+answered = false;
+resultEl.innerText = '';
+answersEl.innerHTML = '';
+const currentData = quizData[currentQuestionIndex];
+questionEl.innerText = `Câu ${currentQuestionIndex + 1}: ${currentData.question}`;
+progressEl.innerText = `Câu ${currentQuestionIndex + 1} / ${quizData.length}`;
+
+currentData.answers.forEach((answer, index) => {
+    const letter = optionLetters[index];
+    const btn = document.createElement('div');
+    btn.classList.add('answer-option', `answer-${letter}`);
+    btn.style.backgroundColor = optionColors[letter];
+    btn.style.color = '#000000';
+    btn.innerHTML = `<span class="answer-label">${letter}</span> ${answer}`;
+    btn.tabIndex = 0;
+    btn.onclick = () => selectAnswer(btn, answer);
+    btn.onkeydown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        btn.click();
+    }
+    };
+    answersEl.appendChild(btn);
+});
+
+quizContainer.focus();
+}
+
+function selectAnswer(btn, answer) {
+if (answered) return;
+answered = true;
+
+const allOptions = document.querySelectorAll('.answer-option');
+allOptions.forEach(opt => opt.style.pointerEvents = 'none');
+
+const correctAnswer = quizData[currentQuestionIndex].correct;
+
+if (answer === correctAnswer) {
+    btn.classList.add('correct');
+    score++;
+} else {
+    btn.classList.add('wrong');
+    allOptions.forEach(opt => {
+    // opt.innerText.trim().substring(2) bỏ ký tự A/B/C/D và dấu cách
+    if (opt.innerText.trim().substring(2) === correctAnswer) {
+        opt.classList.add('correct');
+    }
+    });
+}
+
+resultEl.innerText = 'Nhấn Enter hoặc Space để sang câu tiếp theo...';
+
+autoNextTimeout = setTimeout(() => {
+    goToNextQuestion();
+}, 1000);
+}
+
+function goToNextQuestion() {
+clearTimeout(autoNextTimeout);
+if (currentQuestionIndex < quizData.length - 1) {
+    currentQuestionIndex++;
+    loadQuestion();
+} else {
+    showResult();
+}
+}
+
+function goToPreviousQuestion() {
+clearTimeout(autoNextTimeout);
+if (currentQuestionIndex > 0) {
+    currentQuestionIndex--;
+    loadQuestion();
+}
+}
+
+quizContainer.addEventListener('keydown', function(e) {
+if ((e.key === 'Enter' || e.key === ' ') && answered) {
+    e.preventDefault();
+    goToNextQuestion();
+} else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    goToNextQuestion();
+} else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    goToPreviousQuestion();
+}
+});
+
+function showResult() {
+questionEl.innerText = '';
+answersEl.innerHTML = '';
+progressEl.innerText = '';
+resultEl.innerText = `Bạn đã hoàn thành bài quiz! Điểm của bạn là ${score} / ${quizData.length}.`;
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

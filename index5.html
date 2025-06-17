@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<title>Quiz Kinh Tế Chính Trị - Chương 6 - CÔNG NGHIỆP HÓA, HIỆN ĐẠI HÓA VÀ HỘI NHẬP KINH TẾ QUỐC TẾ CỦA VIỆT NAM</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+    background: #400848; /* tím pastel */
+    color: #222;
+}
+#quiz-container {
+    max-width: 600px;
+    margin: auto;
+    background: #b753c6;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+    outline: none;
+}
+#question {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #222;
+}
+.answer-option {
+    color: #000000 !important;
+    padding: 15px 20px;
+    margin-bottom: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 1em;
+    font-weight: 500;
+    border: 2px solid transparent;
+    transition: background-color 0.3s, border-color 0.3s;
+    display: flex;
+    align-items: center;
+}
+.answer-option:hover {
+    filter: brightness(0.95);
+}
+.answer-option:focus {
+    outline: none;
+    border-color: #ffcc00;
+    box-shadow: 0 0 8px #ffcc00;
+}
+.answer-A { background-color: #D0E8FF; }
+.answer-B { background-color: #D4EDDA; }
+.answer-C { background-color: #FFE5B4; }
+.answer-D { background-color: #F8D7DA; }
+.correct {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border-color: #388e3c !important;
+}
+.wrong {
+    background-color: #f44336 !important;
+    color: white !important;
+    border-color: #d32f2f !important;
+}
+#progress {
+    margin-top: 20px;
+    font-size: 0.95em;
+    color: #555;
+    font-style: italic;
+}
+#result {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #4CAF50;
+    text-align: center;
+    margin-top: 35px;
+}
+.answer-label {
+    font-weight: 700;
+    margin-right: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div id="quiz-container" tabindex="0" aria-live="polite" aria-atomic="true" role="region">
+<div id="question"></div>
+<div id="answers"></div>
+<div id="progress"></div>
+<div id="result" aria-live="assertive"></div>
+</div>
+
+<script>
+const quizData = [
+{
+    question: "Điền từ ngữ thích hợp vào chỗ chấm:\nCách mạng công nghiệp là những bước phát triển ...(1)... về chất trình độ của tư liệu lao động trên cơ sở những …(2)… về kĩ thuật và công nghệ trong quá trình phát triển của nhân loại kéo dài sự thay đổi căn bản về phân công lao động xã hội cũng như tạo bước phát triển …(3)… cao hơn nhờ áp dụng một cách phổ biến những tính năng mới trong kĩ thuật – công nghệ đó vào đời sống xã hội.",
+    answers: [
+      "(1) đột phá; (2) phát minh nhảy vọt; (3) cường độ lao động",
+      "(1) đột phá; (2) phát minh nhảy vọt; (3) năng suất lao động",
+      "(1) nhảy vọt; (2) phát minh đột phá; (3) cường độ lao động",
+      "(1) nhảy vọt; (2) phát minh đột phá; (3) năng suất lao động"
+    ],
+    correct: "(1) nhảy vọt; (2) phát minh đột phá; (3) năng suất lao động"
+  },
+  {
+    question: "Cách mạng công nghiệp lần thứ nhất khởi phát ở quốc gia nào?",
+    answers: [
+      "Anh",
+      "Pháp",
+      "Mỹ",
+      "Đức"
+    ],
+    correct: "Anh"
+  },
+  {
+    question: "Cách mạng công nghiệp lần thứ nhất diễn ra vào khoảng thời gian nào?",
+    answers: [
+      "Từ giữa thế kỉ XVI đến giữa thế kỉ XVII",
+      "Từ giữa thế kỉ XVII đến đầu thế kỉ XVIII",
+      "Từ giữa thế kỉ XVIII đến giữa thế kỉ XIX",
+      "Từ giữa thế kỉ XIX đến đầu thế kỉ XX"
+    ],
+    correct: "Từ giữa thế kỉ XVIII đến giữa thế kỉ XIX"
+  },
+  {
+    question: "Tiền đề của cuộc Cách mạng công nghiệp lần thứ nhất được phát triển trước hết trong lĩnh vực nào?",
+    answers: [
+      "Dệt vải",
+      "Cơ khí",
+      "Tự động",
+      "Hoá chất"
+    ],
+    correct: "Dệt vải"
+  },
+  {
+    question: "Chuyển từ lao động thủ công sang lao động sử dụng máy móc, thực hiện cơ giới hoá sản xuất bằng việc sử dụng năng lượng nước và hơi nước là nội dung cơ bản của cuộc cách mạng công nghiệp nào?",
+    answers: [
+      "Cách mạng công nghiệp lần thứ nhất",
+      "Cách mang công nghiêp lần thứ hai",
+      "Cách mạng công nghiệp lần thứ ba",
+      "Cách mạng công nghiệp lần thứ tư"
+    ],
+    correct: "Cách mạng công nghiệp lần thứ nhất"
+  },
+  {
+    question: "Cuộc cách mạng công nghiệp lần thứ nhất có đặc trưng nào?",
+    answers: [
+      "Sử dụng năng lượng nước và hơi nước để cơ khí hoá sản xuất",
+      "Sử dụng năng lượng điện và động cơ điện để tạo ra dây chuyền sản xuất hàng loạt",
+      "Sử dụng công nghệ thông tin và máy tính để tự động hóa sản xuất",
+      "Liên kết giữa thế giới thực và ảo để thực hiện công việc thông minh và hiệu quả nhất"
+    ],
+    correct: "Sử dụng năng lượng nước và hơi nước để cơ khí hoá sản xuất"
+  },
+  {
+    question: "C. Mác đã khái quát tính quy luật của cuộc Cách mạng công nghiệp lần thứ nhất qua ba giai đoạn phát triển lần lượt là",
+    answers: [
+      "hiệp tác giản đơn, đại công nghiệp và công trường thủ công.",
+      "công trường thủ công, hiệp tác giản đơn và đại công nghiệp.",
+      "hiệp tác giản đơn, công trường thủ công và đại công nghiệp.",
+      "đại công nghiệp, hiệp tác giản đơn và công trường thủ công."
+    ],
+    correct: "hiệp tác giản đơn, công trường thủ công và đại công nghiệp."
+  },
+  {
+    question: "Cách mạng công nghiệp lần thứ hai diễn ra vào khoảng thời gian nào dưới đây?",
+    answers: [
+      "Từ giữa thế kỉ XVI đến giữa thế kỉ XVII",
+      "Từ nửa cuối thế kỉ XVII đến đầu thế kỉ XVIII",
+      "Từ nửa cuối thế kỉ XIX đến đầu thế kỉ XX",
+      "Từ giữa thế ki XIX đến cuối thế kỉ XX"
+    ],
+    correct: "Từ nửa cuối thế kỉ XIX đến đầu thế kỉ XX"
+  },
+  {
+    question: "Điền từ ngữ thích hợp vào chỗ chấm:\nNội dung của Cách mạng công nghiệp lần thứ hai được thể hiện ở việc sử dụng năng lượng ...(1)… và động cơ điện, để tạo ra các ...(2)... có tính chuyên môn hoá cao, chuyển nền sản xuất...(3).. sang nền sàn xuất điện - cơ khí và sang giai đoạn ...(4)... cục bộ trong sản xuất.",
+    answers: [
+      "(1) điện; (2) dây chuyền sản xuất; (3) cơ khí; (4) tự động hoá",
+      "(1) nuớc; (2) dây chuyền sản xuất; (3) tự động hoá; (4) cơ khí",
+      "(1) nước; (2) xí nghiệp sản xuất; (3) cơ khí; (4) tự động hoá",
+      "(1) điện; (2) dây chuyền sản xuất; (3) thủ công; (4) tự đông hoá"
+    ],
+    correct: "(1) điện; (2) dây chuyền sản xuất; (3) cơ khí; (4) tự động hoá"
+  },
+  {
+    question: "Cuộc Cách mạng công nghiệp lần thứ hai có đặc trumg nào?",
+    answers: [
+      "Sử dụng năng lượng nước và hơi nước để cơ khí hoá sản xuất",
+      "Sử dụng năng lưọng điện và động cơ điện để tạo ra dây chuyền sản xuất hàng loạt",
+      "Sử dụng công nghệ thông tin và máy tính để tự động hoá sản xuất",
+      "Sử dụng trí tuệ nhân tạo, liên kết giữa thế giới thực và ảo để thực hiệncông việc thông minh"
+    ],
+    correct: "Sử dụng năng lưọng điện và động cơ điện để tạo ra dây chuyền sản xuất hàng loạt"
+  },
+  {
+    question: "Cách mạng công nghiệp lần thứ ba bắt đầu vào khoảng thời gian nào?",
+    answers: [
+      "Những năm cuối thập niên 40 của thế kỉ XX đến cuối thế kỉ XX",
+      "Những năm cuối thập niên 50 của thế ki XX đến cuối thế kỉ XX",
+      "Những năm đầu thập niên 60 của thế kỉ XX đến cuối thế kỉ XX",
+      "Những năm đầu thập niên 70 của thế ki XX đến cuối thế kỉ XX"
+    ],
+    correct: "Những năm đầu thập niên 60 của thế kỉ XX đến cuối thế kỉ XX"
+  },
+  {
+    question: "Đặc trưng cơ bản của cuộc Cách mạng công nghiệp lần thứ ba là",
+    answers: [
+      "sử dụng công nghệ thông tin và máy tính để tự động hoá sản xuất.",
+      "sử dụng năng lượng nước và hơi nước để cơ khí hoá sản xuất.",
+      "sử dụng năng lượng điện và động cơ điện để tạo ra dây chuyền sản xuất hàng loạt.",
+      "liên kết giữa thế giới thực và ảo để thực hiện công việc thông minh và hiệu quả nhất."
+    ],
+    correct: "sử dụng công nghệ thông tin và máy tính để tự động hoá sản xuất."
+  },
+  {
+    question: "Internet ra đời vào khoảng thời gian nào của thế kỉ XX?",
+    answers: [
+      "Thập niên 60",
+      "Thập niên 70",
+      "Thập niên 80",
+      "Thập niên 90"
+    ],
+    correct: "Thập niên 90"
+  },
+  {
+    question: "Cách mạng công nghiệp lần thứ tư được để cập lần đầu tiên tại Hội chợ triển lãm công nghệ Hannover (Cộng hoà liên bang Đức) vào nǎm nào?",
+    answers: [
+      "2010",
+      "2011",
+      "2012",
+      "2013"
+    ],
+    correct: "2011"
+  },
+  {
+    question: "Cách mạng số, gắn với sự phát triển và phổ biến của internet kết nốivạn vật với nhau (Internet of Things - IoT) là cơ sở hình thành của cuộc cách mạng nào?",
+    answers: [
+      "Cách mạng công nghiệp lần thứ nhất",
+      "Cách mạng công nghiệp lần thứ hai",
+      "Cách mạng công nghiệp lần thứ ba",
+      "Cách mạng công nghiệp lần thứ tư"
+    ],
+    correct: "Cách mạng công nghiệp lần thứ tư"
+  },
+  {
+    question: "Cách mạng công nghiệp lần thứ tư có sự xuất hiện các công nghệ mới là",
+    answers: [
+      "công nghệ thông tin và máy tính.",
+      "trí tuệ nhân tạo, big data, in 3D, ...",
+      "động cơ điện, động cơ đốt trong, ...",
+      "ngành chế tạo ôtô, điện thoại, ..."
+    ],
+    correct: "trí tuệ nhân tạo, big data, in 3D, ..."
+  },
+  {
+    question: "Quá trình chuyển đổi nền sản xuất xã hội từ dựa trên lao động thủ công là chính sang nền sản xuất xã hội dựa chủ yếu trên lao động bằng máy móc nhằm tạo ra năng suất lao động xã hội cao là nội dung của khái niệm nào?",
+    answers: [
+      "Công nghiệp hoá",
+      "Hiện đại hoá",
+      "Tăng trưởng kinh tế",
+      "Phát triển kinh tế"
+    ],
+    correct: "Công nghiệp hoá"
+  },
+  {
+    question: "Quốc gia nào dưới đây tiêu biểu cho mô hình công nghiệp hoá cổ diển?",
+    answers: [
+      "Anh",
+      "Nhật Bản",
+      "Hàn Quốc",
+      "Đức"
+    ],
+    correct: "Anh"
+  },
+  {
+    question: "Nguồn vốn chủ yếu để công nghiệp hoá ở các nước tư bản cổ điển không đến từ nguồn nào dưới đây?",
+    answers: [
+      "Khai thác lao động làm thuê",
+      "Làm phá sản những người sản xuất nhỏ trong nông nghiệp",
+      "Nhận viện trợ từ các quốc gia phát triển",
+      "Xâm chiếm và cướp bóc thuộc địa"
+    ],
+    correct: "Nhận viện trợ từ các quốc gia phát triển"
+  },
+  {
+    question: "Quá trình công nghiệp hoá ở các nước tư bản cổ điển diễn ra trung bình khoảng",
+    answers: [
+      "10 đến 20 năm.",
+      "20 đến 30 năm.",
+      "40 đến 50 năm.",
+      "60 đến 80 năm."
+    ],
+    correct: "60 đến 80 năm."
+  },
+  {
+    question: "Mô hình công nghiệp hoá kiểu Liên Xô bắt đầu vào khoảng thời gian nào và ở đâu?",
+    answers: [
+      "Đầu những năm 1930 ở Liên Xô",
+      "Đầu những năm 1945 ở Liên Xô",
+      "Đầu những năm 1930 ở Đông Âu",
+      "Đầu những năm 1945 ở Đông Âu"
+    ],
+    correct: "Đầu những năm 1930 ở Liên Xô"
+  },
+  {
+    question: "Con đường công nghiệp hoá kiểu Liên Xô thường ưu tiên phát triển ngành",
+    answers: [
+      "nông nghiệp.",
+      "công nghiệp nặng.",
+      "dịch vụ.",
+      "công nghiệp nhẹ."
+    ],
+    correct: "công nghiệp nặng."
+  },
+  {
+    question: "Quốc gia nào lựa chọn mô hình công nghiệp hoá rút ngắn?",
+    answers: [
+      "Anh",
+      "Đức",
+      "Liên Xô",
+      "Hàn Quốc"
+    ],
+    correct: "Hàn Quốc"
+  },
+  {
+    question: "Quốc gia nào thuộc nhóm các nước công nghiệp mới (NICs)?",
+    answers: [
+      "Hoa Kỳ",
+      "Singapore",
+      "Việt Nam",
+      "Trung Quốc"
+    ],
+    correct: "Singapore"
+  },
+  {
+    question: "Các nước công nghiệp mới (NICs) trung bình mất khoảng bao nhiêu năm để thực hiện thành công quá trình công nghiệp hoá, hiện đại hoá?",
+    answers: [
+      "10 đến 15 năm",
+      "20 đến 30 năm",
+      "30 đến 40 năm",
+      "60 đến 80 năm"
+    ],
+    correct: "20 đến 30 năm"
+  },
+  {
+    question: "Nhật Bản và các nước công nghiệp mới (NICs) đã sử dụng con đường nào để tiến hành công nghiệp hoá, hiện đại hoá?",
+    answers: [
+      "Đầu tư nghiên cứu, chế tạo và hoàn thiện dần từ trình độ thấp đến trình đô cao",
+      "Tiếp nhận đầu tư công nghệ hiện đại từ các nước phát triển hơn",
+      "Xây dựng chiến lược phát triển khoa học - công nghệ nhiều tầng, kết hợp cả công nghệ truyền thống và công nghệ hiện đại",
+      "Thực hiện công nghiệp hoá tách rời với hiện đại hoá, ưu tiên đầu tư các ngành công nghiệp nặng"
+    ],
+    correct: "Xây dựng chiến lược phát triển khoa học - công nghệ nhiều tầng, kết hợp cả công nghệ truyền thống và công nghệ hiện đại"
+  },
+  {
+    question: "Ngày nay, các nước đi sau muốn rút ngắn thời gian thực hiện quá trình công nghiệp hoá, hiện đại hoá cần chú ý",
+    answers: [
+      "khai thác tốt lợi thế trong nước và tận dụng, tiếp thu những nguồn lực, thành tựu khoa học, công nghệ mới của các nước tiên tiến.",
+      "khai thác triệt để, tối đa các nguồn lực trong nước, không nên tiếp nhận chuyển giao công nghệ từ các nước khác.",
+      "chú trọng tiếp nhận chuyển giao công nghệ từ các nước tiên tiến, chỉ dựavào nguồn lực từ các nước phát triển.",
+      "dựa vào nguồn lực vốn có của quốc gia, thực hiện các bước đi tuần tự từ công nghiệp hoá rồi đến hiện đại hoá."
+    ],
+    correct: "khai thác tốt lợi thế trong nước và tận dụng, tiếp thu những nguồn lực, thành tựu khoa học, công nghệ mới của các nước tiên tiến."
+  },
+  {
+    question: "Nội dung nào dưới đây không thể hiện vai trò của cách mạng công nghiệp đối với sự phát triển",
+    answers: [
+      "Thúc đẩy sự phát triển lực lượng sản xuất",
+      "Thúc đẩy sự ra đời của các tổ chức độc quyền",
+      "Thúc đẩy đổi mới phương thức quản trị phát triển",
+      "Thúc đẩy hoàn thiện quan hệ sản xuất"
+    ],
+    correct: "Thúc đẩy sự ra đời của các tổ chức độc quyền"
+  },
+  {
+    question: "Công nghệ kĩ thuật số và internet đã tạo điều kiện để chuyển biến các nền kinh tế công nghiệp sang",
+    answers: [
+      "nền kinh tế tri thức.",
+      "nền kinh tế số hoá.",
+      "nền kinh tế độc quyền.",
+      "nền kinh tế thị trường."
+    ],
+    correct: "nền kinh tế tri thức."
+  },
+  {
+    question: "“Chính phủ điện tử” là khái niệm xuất hiện từ cuộc cách mạng công nghiệp lần thứ mấy?",
+    answers: [
+      "Lần thứ nhất",
+      "Lần thứ hai",
+      "Lần thứ ba",
+      "Lần thứ tư"
+    ],
+    correct: "Lần thứ ba"
+  },
+{
+    question: "“Đô thị thông minh” là khái niệm gắn với sự phát triển của cuộc cách mạng công nghiệp lần thứ mấy?",
+    answers: [
+      "Lần thứ nhất",
+      "Lần thứ hai",
+      "Lần thứ ba",
+      "Lần thứ tu"
+    ],
+    correct: "Lần thứ tu"
+  },
+  {
+    question: "Nội dung nào sau đây không phải là đặc điểm chủ yếu của quá trình công nghiệp hoá, hiện đại hoá ở Việt nam?",
+    answers: [
+      "Công nghiệp hoá, hiện đại hoá theo định hướng xã hội chủ nghĩa, thực hiện mục tiêu “dân giàu, nước mạnh, dân chủ, công bằng, văn minh”",
+      "Công nghiệp hoá, hiện đại hoá gắn với phát triển kinh tế tri thức",
+      "Công nghiệp hoá, hiện đại hoá trong điều kiện kinh tế thị trường định hướng xã hội chủ nghĩa",
+      "Công nghiệp hoá, hiện đại hoá trong bối cảnh hạn chế hợp tác, hội nhập kinh tế quốc tế"
+    ],
+    correct: "Công nghiệp hoá, hiện đại hoá trong bối cảnh hạn chế hợp tác, hội nhập kinh tế quốc tế"
+  },
+  {
+    question: "Điền từ ngữ thích hợp vào chỗ chấm:\nCông nghiệp hoá, hiện đại hoá là quá trình chuyển đổi căn bản, ...(1)... các hoạt động sản xuất kinh doanh, dịch vụ và quản lí kinh tế - xã hội, từ sử dụng sức lao động ...(2)... là chính sang sử dụng một cách phổ biến sức lao động với ...(3)..., phương tiện, phương pháp tiên tiến hiện đại dựa trên sự phát triển của công nghiệp và tiến bộ khoa học - công nghệ, nhằm tạo ra ...(4)... xã hội cao.",
+    answers: [
+      "(1) toàn diện; (2) thủ công; (3) công nghệ; (4) năng suất lao động",
+      "(1) chủ yếu; (2) thủ công; (3) khoa học; (4) năng suất lao động",
+      "(1) toàn diện; (2) thủ công; (3) khoa học; (4) cường độ lao dông",
+      "(1) chủ yếu; (2) thủ công; (3) công nghệ; (4) cường độ lao động"
+    ],
+    correct: "(1) toàn diện; (2) thủ công; (3) công nghệ; (4) năng suất lao động"
+  },
+  {
+    question: "Quan điểm nào dưới đây không đúng khi lí giải về tính tất yếu của quá trình công nghiệp hoá, hiện đại hoá ở nước ta?",
+    answers: [
+      "Công nghiệp hoá là quy luật phổ biến của sự phát triển lực lượng sản xuất xã hội đối với mọi quốc gia.",
+      "Công nghiệp hoá, hiện đại hoá giúp nước ta xây dụng cơ sở vật chất-kĩ thuật để quá độ lên chủ nghĩa xã hội từ một nước có nền kinh tế kém phát triển.",
+      "Công nghiệp hoá, hiện đại hoá làm cho khối liên minh công nhân, nông dân và trí thức ngày càng được tăng cường, củng cố; nâng cao vai trò lãnh đạo của giai cấp công nhân.",
+      "Công nghiệp hoá, hiện đại hoá để phát triển cơ chế kinh tế tập trung, quan liêu, bao cấp."
+    ],
+    correct: "Công nghiệp hoá, hiện đại hoá để phát triển cơ chế kinh tế tập trung, quan liêu, bao cấp."
+  },
+  {
+    question: "Trong nền kinh tế tri thức, tri thức đóng vai trò là",
+    answers: [
+      "lực lượng sản xuất trực tiếp.",
+      "lực lượng sản xuất gián tiếp.",
+      "quan hệ sản xuất đặc trưng.",
+      "quan hệ sản xuất thứ yếu."
+    ],
+    correct: "lực lượng sản xuất trực tiếp."
+  },
+  {
+    question: "Nội dung nào dưới đây là đặc điểm chủ yếu của nền kinh tế tri thức?",
+    answers: [
+      "Các ngành kinh tế thủ công, dựa vào sức lao động của con người là chính, ngày càng tăng và chiếm đa số.",
+      "Tri thức trở thành lực lưọng sản xuất trực tiếp, là nguồn lực quan trọng hàng đầu, quyếtđịnh sự tăng trưởng - phát triển kinh tế.",
+      "Học tập trở thành yêu cầu thường xuyên đối với mọi người và phát triển công nghiệp nặng trở thành nhiệm vụ trung tâm của xã hội.",
+      "Trí tuệ nhân tạo được úng dụng rộng rãi trong mọi lĩnh vực và thiết lậpđược các mạng thông tin đa phương tiện phủ khắp nước."
+    ],
+    correct: "Tri thức trở thành lực lưọng sản xuất trực tiếp, là nguồn lực quan trọng hàng đầu, quyếtđịnh sự tăng trưởng - phát triển kinh tế."
+  },
+  {
+    question: "Nội dung nào dưới đây không phải là đặc điểm chủ yếu của nền kinh tế tri thức?",
+    answers: [
+      "Công nghệ thông tin được ứng dụng rộng rãi trong mọi lĩnh vực và thiết lập được các mạng thông tin đa phương tiện phủ khắp nước.",
+      "Học tập trở thành yêu cầu thường xuyên đối với mọi người và phát triển con nguời trở thành nhiệm vụ trung tâm của xã hội.",
+      "Các ngành kinh tế dựa vào tri thức, dựa vào các thành tựu mới nhất của khoa học và công nghệ ngày càng tăng và chiếm đa số.",
+      "Các ngành kinh tế thủ công, dựa vào sức lao động của con người là chính ngày càngtăng và chiếm đa số."
+    ],
+    correct: "Các ngành kinh tế thủ công, dựa vào sức lao động của con người là chính ngày càngtăng và chiếm đa số."
+  },
+  {
+    question: "Nội dung của công nghiệp hoá, hiện đại hoá ở Việt Nam là",
+    answers: [
+      "tạo lập những điều kiện và thực hiện các nhiệm vụ để chuyển đổi nền sản xuất - xã hộilạc hậu sang nền sản xuất - xã hội hiện đại.",
+      "tăng cường nhận viện trợ và thực hiện các nhiệm vụ để chuyển đổi nền sản xuất - xã hội lạc hậu sang nền sản xuất - xã hội hiện đại.",
+      "tạo lập những điều kiện trong nước và và tăng cưòng nhận viện trợ nước ngoài để chuyển đổi nền sản xuất - xã hội lạc hậu sang nền sản xuất – xã hội hiện đại.",
+      "tăng cường hợp tác, đầu tư quốc tế, từng bước hoàn thiện lực lượng sản xuất phù hợp với trình độ phát triển của quan hệ sản xuất."
+    ],
+    correct: "tạo lập những điều kiện và thực hiện các nhiệm vụ để chuyển đổi nền sản xuất - xã hộilạc hậu sang nền sản xuất - xã hội hiện đại."
+  },
+  {
+    question: "Nhiệm vụ nào dưới đây không phải là nhiệm vụ cần thực hiện để chuyển đổi nền sản xuất - xã hội lạc hậu sang nền sản xuất - xã hội hiệnđại ở nuớc ta?",
+    answers: [
+      "Đẩy mạnh ứng dụng những thành tựu của khoa học - công nghệ mới hiện đại.",
+      "Chuyển dịch cơ cấu kinh tế theo hướng hiện đại, hợp lí và hiệu quà.",
+      "Từng buớc hoàn thiện lực lượng sản xuất phù hợp với trình độ phát triển của quan hệsản xuất.",
+      "Sẵn sàng thích ứng với tác đông của bối cảnh cuộc Cách mạng công nghiệp lần thứ tư."
+    ],
+    correct: "Sẵn sàng thích ứng với tác đông của bối cảnh cuộc Cách mạng công nghiệp lần thứ tư."
+  },
+  {
+    question: "Mối quan hệ tỉ lệ giữa các ngành, các vùng và các thành phần kinh tế là nội dung của khái niệm nào?",
+    answers: [
+      "Phát triển kinh tế",
+      "Cơ cấu kinh tế",
+      "Thành phần kinh tế",
+      "Tăng trưởng kinh tế"
+    ],
+    correct: "Cơ cấu kinh tế"
+  },
+  {
+    question: "Cơ cấu kinh tế bao gồm",
+    answers: [
+      "Cơ cấu ngành, cơ cấu vùng và cơ cấu nguồn lực kinh tế",
+      "Cơ cấu ngành, cơ cấu nguồn lực, cơ cấu thành phần kinh tế",
+      "Cơ cấu ngành, cơ cấu vùng và cơ cấu thành phân kinh tế",
+      "Cơ cấu nguồn lực, cơ cấu vùng và cơ cấu thành phần kinh tế"
+    ],
+    correct: "Cơ cấu ngành, cơ cấu vùng và cơ cấu thành phân kinh tế"
+  },
+  {
+    question: "Trong hệ thống cơ cấu kinh tế, cơ cấu giữ vị trí quan trọng nhất là",
+    answers: [
+      "Cơ cấu ngành kinh tế",
+      "Cơ cấu vùng kinh tế",
+      "Cơ cấu nguồn lực kinh tế",
+      "Cơ cấu thành phần kinh tế"
+    ],
+    correct: "Cơ cấu ngành kinh tế"
+  },
+  {
+    question: "Chuyển dịch cơ cấu ngành kinh tế theo hướng nào dưới đây được coi là hiện đại hiệu quả?",
+    answers: [
+      "Tăng tỉ trọng ngành kinh tế và dịch vụ, giảm tỉ trọng ngành công nghiệp",
+      "Tăng tỉ trọng ngành công nghiệp và dịch vụ, giảm tỉ trọng ngành nông nghiệp",
+      "Tăng tỉ trọng ngành dịch vụ, giảm tỉ trọng ngành công nghiệp và nông nghiệp",
+      "Tăng tỉ trọng ngành nông nghiệp, giảm tỉ trọng ngành công nghiệp và dịch vụ"
+    ],
+    correct: "Tăng tỉ trọng ngành công nghiệp và dịch vụ, giảm tỉ trọng ngành nông nghiệp"
+  },
+  {
+    question: "Nội dung nào dưới đây không phải là yêu cầu cần đáp ứng của một cơ cấu kinh tế hợp lý, hiện đại và hiệu quả?",
+    answers: [
+      "Khai thác, phân bổ và phát huy hiệu quả các nguồn lực trong nước, thu hút có hiệu quả các nguồn lực bên ngoài để phát triển kinh tế - xã hội",
+      "Phù hợp với cơ cấu kinh tế của tất cả các nước tiên tiến, hiện đại, có nền kinh tế phát triển cao trên thế giới",
+      "Cho phép ứng dụng những thành tựu khoa học – công nghệ mới, hiện đại và các ngành, các vùng, và các lĩnh vực của nền kinh tế",
+      "Phù hợp với xu thế phát triển chung của nền kinh tế và yêu cầu của toàn cầu hóa và hội nhập quốc tế"
+    ],
+    correct: "Phù hợp với cơ cấu kinh tế của tất cả các nước tiên tiến, hiện đại, có nền kinh tế phát triển cao trên thế giới"
+  },
+  {
+    question: "Một trong những nội dung chủ yếu mà công nghiệp hóa, hiện đại hóa ở Việt Nam cần thực hiện để thích ứng với các tác động của cuộc Cách mạng Công nghiệp lần thứ IV là",
+    answers: [
+      "Duy trì, củng cố khung pháp lý hiện tại để khẳng định vai trò quan trọng của Nhà nước về kinh tế",
+      "Hoàn thiện thể chế, xây dựng nền kinh tế dựa trên nền tảng đổi mới, sáng tạo",
+      "Hạn chế tối đa các nguồn lực của Nhà nước, của toàn dân để phục vụ cho nghiên cứu, triển khai, ứng dụng các thành tựu của cách mạng nông nghiệp",
+      "Tập trung chủ yếu việc huy động, khai thác nguồn lực nước ngoài để phát triển nhanh chóng hạ tầng công nghệ thông tin và truyền thông"
+    ],
+    correct: "Hoàn thiện thể chế, xây dựng nền kinh tế dựa trên nền tảng đổi mới, sáng tạo"
+  },
+  {
+    question: "Cơ cấu ngành kinh tế giữ vị trí quan trọng nhất trong hệ thống cơ cấu kinh tế vì",
+    answers: [
+      "Phản ánh trình độ phát triển của nền kinh tế và kết quả của quá trình thực hiện công nghiệp hóa, hiện đại hóa",
+      "Là biểu hiện duy nhất của cơ cấu kinh tế và là thước đo kết quả của quá trình thực hiện công nghiệp hóa, hiện đại hóa",
+      "Tập trung mọi nguồn lực nền kinh tế và quyết định kết quả của quá trình thực hiện công nghiệp hóa, hiện đại hóa",
+      "Không bị ảnh hưởng bởi các cơ cấu kinh tế khác và quyết định kết quả của quá trình thực hiện công nghiệp hóa, hiện đại hóa"
+    ],
+    correct: "Phản ánh trình độ phát triển của nền kinh tế và kết quả của quá trình thực hiện công nghiệp hóa, hiện đại hóa"
+  },
+  {
+    question: "Nhiệm vụ nào dưới đây không phải là nhiệm vụ mà công nghiệp hóa, hiện đại hóa ở nước ta cần thực hiện để ứng phó với những tác động tiêu cực của cuộc Cách mạng Công nghiệp lần thứ IV ?",
+    answers: [
+      "Huy động tối đa các nguồn vốn viện trợ từ nước ngoài",
+      "Thực hiện chuyển đổi số nền kinh tế và quản trị xã hội",
+      "Đẩy mạnh công nghiệp hóa, hiện đại hóa nông nghiệp, nông thôn",
+      "Phát triển nguồn nhân lực đặc biệt là nguồn nhân lực chất lượng cao"
+    ],
+    correct: "Huy động tối đa các nguồn vốn viện trợ từ nước ngoài"
+  },
+  {
+    question: "Nội dung nào có vai trò đặc biệt quan trọng trong quá trình thực hiện công nghiệp hóa, hiện đại hóa ở Việt Nam để thích ứng với tác động của cuộc Cách mạng công nghiệp lần thứ tư ?",
+    answers: [
+      "Phát hiện phát triển nguồn nhân lực đặc biệt là nguồn nhân lực chất lượng cao",
+      "Thực hiện chuyển đổi số nền kinh tế và quản trị xã hội",
+      "Xây dụng và phát triển hạ tầng kĩ thuật về công nghệ thông tin vàtruyên thông",
+      "Đẩy mạnh công nghiệp hoá, hiện đại hoá nông nghiêp,nông thôn"
+    ],
+    correct: "Phát hiện phát triển nguồn nhân lực đặc biệt là nguồn nhân lực chất lượng cao"
+  },
+  {
+    question: "Một trong những giải pháp cơ bản nước ta cần thực hiện để nâng cao trình độ đảo tạo, sử dụng nhân lực, nhân tài là",
+    answers: [
+      "đổi mới mạnh mẽ và đồng bộ lĩnh vực giáo dục - đào tạo theo hưóng coi trọng chất lượng, hiệu quả và coi trọng trang bị nội dung kiến thức chongười học",
+      "quy hoạch lại mạng lưới cơ sở giáo dục nghề nghiệp, giáo dục đại học gắn với quy hoạch phát triển kinh tế - xã hội và phát triển nguồn nhân lực.",
+      "thắt chặt đầu tư cho phát triển nguồn nhân lực đặc biệt là đầu tư cho lĩnh vực giáo dục- đào tạo.",
+      "tổ chức nghiên cứu khoa học và đào tạo phải thay đổi cơ bản phương thức hoạt động, tách rời giữa nghiên cứu, đào tạo với doanh nghiệp."
+    ],
+    correct: "quy hoạch lại mạng lưới cơ sở giáo dục nghề nghiệp, giáo dục đại học gắn với quy hoạch phát triển kinh tế - xã hội và phát triển nguồn nhân lực."
+  },
+  {
+    question: "Nội dung nào dưới đây không phải là giải pháp cơ bản nước ta cần thực hiện để nâng cao trình độ đào tạo, sử dụng nhân lực, nhân tài?",
+    answers: [
+      "Đổi mới mạnh mẽ và đồng bộ lĩnh vực giáo dục -dào tạo theo hương coi trọng chất lượng, hiệu quả và coi trọng phát triển phẩm chất, năng lực của nguòi học",
+      "Quy hoạch lại mạng lưới cơ sở giáo dục nghề nghiệp, giáo dục đại học gắn với quy hoạch phát triển kinh tế - xã hội và phát triển nguồn nhân lục",
+      "Tăng cường đầu tư cho phát triển nguồn nhân lực, trực tiếp nhất là đầu tưcho lĩnh vực giáo dục - đào tạo",
+      "Tổ chức nghiên cứu khoa học và đào tạo phải thay đổi cơ bản phương thức hoạt động, tách rời giữa nghiên cứu, đào tạo với doanh nghiệp"
+    ],
+    correct: "Tổ chức nghiên cứu khoa học và đào tạo phải thay đổi cơ bản phương thức hoạt động, tách rời giữa nghiên cứu, đào tạo với doanh nghiệp"
+  },
+  {
+    question: "Điền từ ngữ thích hợp vào chỗ chấm:\nHội nhập kinh tế quốc tế của một quốc gia là quá trình quốc gia đó thực hiện ...(1)... nền kinh tế của mình với nền kinh tế thế giới dựa trên sự ...(2)... lợi ích, đồng thời tuân thủ các ..\n(3)... quốc tế chung.",
+    answers: [
+      "(1) gắn kết, (2) chia sẻ, (3) chuần mực",
+      "(1) hoà nhập, (2) hợp nhất, (3) chuẩn mực",
+      "(1) gắn kết, (2) hợp nhất, (3) chuần mực",
+      "(1) hoà nhập, (2) chia sẻ, (3) chuẩn mục"
+    ],
+    correct: "(1) gắn kết, (2) chia sẻ, (3) chuần mực"
+  },
+  {
+    question: "Toàn cầu hoá trên phương diện nào dưới đây là xu thế nổi trội nhất,vừa là trung tâm vừa là cơ sở và cũng là động lực thúc đẩy toàn cầu hoácác lĩnh vực khác?",
+    answers: [
+      "Văn hoá",
+      "Xã hội",
+      "Chính tri",
+      "Kinh té"
+    ],
+    correct: "Kinh té"
+  },
+  {
+    question: "Tác động tích cực của hội nhập kinh tế quốc tế đối với nước ta là",
+    answers: [
+      "mở rộng thị trường, tiếp thu khoa học - công nghệ, vốn, chuyển dịch cơ cấu kinh tế trong nước; tạo cơ hội để nâng cao chất lượng nguồn nhân lực; thúc đầy hội nhập của các lĩnh vựrc khác.",
+      "tạo cơ hội để nâng cao chất lượng nguồn nhân lực; thúc đẩy hội nhập củacác lĩnh vực; có thể làm gia tăng sự phụ thuộc của nền kinh tế quốc gia vào thị trường bên ngoài.",
+      "mở rộng thị trường, tiếp thu khoa học - công nghệ, vốn, chuyển dịch cơ cấu kinh tế trong nước; làm gia tăng sự cạnh tranh gay gắt khiến nhiềudoanh nghiệp và ngành kinh tế gặp khó khăn.",
+      "mở rộng thị trường, tiếp thu khoa học - công nghệ, vốn, chuyển dịch cơ cấu kinh tế trong nước; có thể dẫn đến phân phối không công bằng, có nguy cơ làm tăng khoảng cách giàu - nghèo và bất bình đằng xã hội."
+    ],
+    correct: "mở rộng thị trường, tiếp thu khoa học - công nghệ, vốn, chuyển dịch cơ cấu kinh tế trong nước; tạo cơ hội để nâng cao chất lượng nguồn nhân lực; thúc đầy hội nhập của các lĩnh vựrc khác."
+  },
+  {
+    question: "Một trong những tác động tiêu cực của hội nhập kinh tế quốc tế đối với nước ta là",
+    answers: [
+      "tạo cơ hội để nâng cao chất lượng nguồn nhân lực.",
+      "tạo điều kiện để thúc đẩy hội nhập của các lĩnh vực vǎn hoá, chính trị, cùng cố an ninh, quốc phòng.",
+      "mở rộng thị trường, tiếp thu khoa học - công nghệ, vốn, chuyển dịch cơ cấu kinh tế trong nước.",
+      "làm gia tăng sự phụ thuộc của nền kinh tế quốc gia vào thị truòng bên ngoài."
+    ],
+    correct: "làm gia tăng sự phụ thuộc của nền kinh tế quốc gia vào thị truòng bên ngoài."
+  },
+  {
+    question: "Nội dung nào dưới đây không phải là tác động tích cực của hội nhậpkinh tế quốc tế?",
+    answers: [
+      "Tạo điều kiện mở rộng thị trường, tiếp thu khoa học - công nghệ, vốn chuyển dịch cơ cấu kinh tế trong nước",
+      "Làm gịa tăng sự cạnh tranh gay gắt khiến nhiều doanh nghiệp và ngành kinh tế gặp khó khǎn",
+      "Tạo điều kiện để thúc đẩy hội nhập của các lĩnh vực văn hoá, chính trị, củng cố an ninh quốc phòng",
+      "Tạo cơ hội để nâng cao chất lượng nguồn nhân lực"
+    ],
+    correct: "Làm gịa tăng sự cạnh tranh gay gắt khiến nhiều doanh nghiệp và ngành kinh tế gặp khó khǎn"
+  },
+  {
+    question: "Nội dung nào dưới đây không phải là tác động tiêu cục của hội nhập kinh tế quốc tế?",
+    answers: [
+      "Làm gia tăng cạnh tranh gay gắt khiến nhiều doanh nghiệp và ngành kinh tế nước ta gặp khó khǎn trong phát triển, thậm chí phá sản",
+      "Làm gia tăng sự phụ thuộc của nền kinh tế quốc gia vào thị truòngbên ngoài",
+      "Tạo điều kiện để thúc đầy hội nhập của các lĩnh vực văn hoá, chính trị, cùng cố an ninh - quốc phòng",
+      "Có thể tạo ra một số thách thức với quyền lực nhà nước, chủ quyền quốc gia"
+    ],
+    correct: "Tạo điều kiện để thúc đầy hội nhập của các lĩnh vực văn hoá, chính trị, cùng cố an ninh - quốc phòng"
+  },
+  {
+    question: "Việt Nam gia nhập Hiệp hội các quốc gia Đông Nam Á (ASEAN) vào năm nào?",
+    answers: [
+      "1995",
+      "1996",
+      "1997",
+      "1998"
+    ],
+    correct: "1995"
+  },
+  {
+    question: "Việt Nam tham gia Khu vực Thương mại tự do ASEAN (AFTA) vào nǎm nào?",
+    answers: [
+      "1995",
+      "1996",
+      "1997",
+      "1998"
+    ],
+    correct: "1996"
+  },
+  {
+    question: "Việt Nam chính thức trở thành thành viên của Tổ chức Thương mại Thế giới (WTO) vào năm",
+    answers: [
+      "2004.",
+      "2005.",
+      "2006.",
+      "2007."
+    ],
+    correct: "2007."
+  },
+  {
+    question: "Nội dung 'Xây dựng nền kinh tế tự chủ phải trên cơ sở làm chủ công nghệ và chủ động, tích cực hội nhập, đa dạng hoá thị trường, nâng cao khả năng thích ứng của nền kinh tế ' được Đảng ta nêu rõ trong văn bàn nào?",
+    answers: [
+      "Chiến lược phát triển kinh tế - xã hội 1991-2000",
+      "Chiến lược phát triển kinh tế - xã hội 2001-2010",
+      "Chiến lược phát triển kinh tế - xã hội 2011-2020",
+      "Chiến luợc phát triển kinh tế - xã hôi 2021-2030"
+    ],
+    correct: "Chiến luợc phát triển kinh tế - xã hôi 2021-2030"
+  },
+{
+    question: "Hội nhập kinh tế quốc tế mang tính tất yếu khách quan vì",
+    answers: [
+      "hội nhập kinh tế quốc tế là phương thức phát triển phổ biến của các nước.",
+      "hội nhập kinh tế quốc tế là xu hướng phát triển riêng của các nước lóm trênthé giói.",
+      "hội nhập kinh tế quốc tế góp phần hạn chế chủ quyền quốc gia của các nước kém phát triển.",
+      "hội nhập kinh tế quốc tế không phải là con đưòng giúp các nước kém phát triển khắc phục nguy cơ tụt hậu."
+    ],
+    correct: "hội nhập kinh tế quốc tế là phương thức phát triển phổ biến của các nước."
+  },
+  {
+    question: "Nhận định nào dưới đây không đúng khi nói về hội nhập kinh tếquốc tế?",
+    answers: [
+      "Hội nhập kinh tế quốc tế là phương thức phát triển phổ biến của các nuớc.",
+      "Hội nhập kinh tế quốc tế là xu hướng phát triển riêng của các nuớc lớn trên thê giói.",
+      "Hội nhập kinh tế quốc tế tạo ra cơ hội để các quốc gia giải quyết những vấn đề toàn cầu đã và đang xuất hiện ngày càng nhiều.",
+      "Hội nhập kinh tế quốc tế là con đường có thể giúp cho các nước đang và kém phát triển thu hẹp khoảng cách với các nước tiên tiến."
+    ],
+    correct: "Hội nhập kinh tế quốc tế là xu hướng phát triển riêng của các nuớc lớn trên thê giói."
+  },
+  {
+    question: "Đối với các nước đang và kém phát triển thì hội nhập kinh tế quốc tế càng trở nên cần thiết, vì hội nhập kinh tế quốc tế",
+    answers: [
+      "là cơ hội để các nước này tiếp cận và sử dụng được các nguồn lực bên ngoai như tài chính, khoa học - công nghệ, kinh nghiệm của các nước cho phát triển.",
+      "có thể làm gia tăng sự phụ thuộc của nền kinh tế quốc gia vào thị trường bên ngoài.",
+      "tạo ra khoảng cách ngày càng xa giữa các nước phát triển với các nước đang và kém phát triển.",
+      "tạo điều kiện để các nước này tranh thủ nguồn việc trợ từ các nướ phát triển trên thế giới."
+    ],
+    correct: "là cơ hội để các nước này tiếp cận và sử dụng được các nguồn lực bên ngoai như tài chính, khoa học - công nghệ, kinh nghiệm của các nước cho phát triển."
+  },
+  {
+    question: "Khẳng định nào dưới đây là đúng khi nói về hội nhập kinh tế quốc tế?",
+    answers: [
+      "Chỉ những nước phát triển mới đủ điều kiện tham gia hội nhập kinh tếquốc tế.",
+      "Các nước đang và kém phát triển không nên tham gia hội nhập kinh tế quốc tế.",
+      "Hội nhập kinh tế quốc tế là xu hướng chung của tất cả các nuớc trên thế giới.",
+      "Hội nhập kinh tế quốc tế là xu hướng riêng của các nước đang và kém phát triên."
+    ],
+    correct: "Hội nhập kinh tế quốc tế là xu hướng chung của tất cả các nuớc trên thế giới."
+  },
+  {
+    question: "Nội dung của hội nhập kinh tế quốc tế ở nước ta là",
+    answers: [
+      "chuẩn bị các điều kiện để thực hiện hội nhập hiệu quả, thành công và thực hiện đa phương hoá các quan hệ đối ngoại.",
+      "chuẩn bị các điều kiện để thực hiện hội nhập hiệu quả, thành công và thực hiện đa dạng các hình thức, các mức độ hội nhập kinh tế quốc tế.",
+      "đa phương hoá các quan hệ đối ngoại và thực hiện các hình thúc, cácmức độ hội nhập kinh tế quốc tế.",
+      "thực hiện các hình thức, các mức độ hội nhập kinh tế quốc tế và phát huy nôi lực."
+    ],
+    correct: "chuẩn bị các điều kiện để thực hiện hội nhập hiệu quả, thành công và thực hiện đa dạng các hình thức, các mức độ hội nhập kinh tế quốc tế."
+  },
+  {
+    question: "Tiến trình hội nhập kinh tế quốc tế được chia thành các mức độ cơ bản từ thấp đến cao là",
+    answers: [
+      "Thoả thuận thương mại ưu đãi (PTA), Khu vực mậu dịch tự do (FTA),Liên minh thuế quan (CU), Thị trường chung (hay thị trường duy nhất), Liên minh kinh tế - tiền tệ,...",
+      "Khu vực mậu dịch tự do (FTA), Thoả thuận thương mại ưu đãi (PTA),Liên minh thuế quan (CU), Thị trường chung (hay thị trường duy nhất), Liên minh kinh tế - tiền tệ,...",
+      "Liên minh thuế quan (CU), Thoả thuận thương mại ưu đãi (PTA), Khu vực mậu dịch tự do (FTA), Thị trưòng chung (hay thị trường duy nhất), Liên minh kinh tế- tiền tệ,..",
+      "Khu vực mậu dịch tự do (FTA), Liên minh thuế quan (CU), Thị trường chung (hay thị trường duy nhất), Thoả thuận thương mại ưu đãi (PTA), Liên minh kinh tế - tiền tệ,..."
+    ],
+    correct: "Thoả thuận thương mại ưu đãi (PTA), Khu vực mậu dịch tự do (FTA),Liên minh thuế quan (CU), Thị trường chung (hay thị trường duy nhất), Liên minh kinh tế - tiền tệ,..."
+  },
+  {
+    question: "Nội dung nào dưới đây không phải là biện pháp mà nước ta cần thực hiện để xây dựng thành công nền kinh tế độc lập, tự chủ đi đôi với tích cực và chủ động hội nhập kinh tế quốc tế?",
+    answers: [
+      "Hoàn thiện, bổ sung đường lối chung và đường lối kinh tế, xây dựng và phát triển đất nước",
+      "Tăng cường mối quan hệ hợp tác với các nước phát triển trên thế giới bằng moi giá",
+      "Đẩy mạnh quan hệ kinh tế đối ngoại và chủ động hội nhập kinh tế quốc tế",
+      "Tǎng cường năng lực cạnh tranh của nền kinh tế bằng đổi mới, hoàn thiện thể chế kinh tế, hành chính"
+    ],
+    correct: "Tăng cường mối quan hệ hợp tác với các nước phát triển trên thế giới bằng moi giá"
+  },
+  {
+    question: "Chủ thể nào sẽ được đặt vào vị trí trung tâm trong tiến trình hội nhập kinh tế quốc tế của nước ta?",
+    answers: [
+      "Nhà nước",
+      "Người dân",
+      "Đội ngũ trí thức",
+      "Doanh nghiêp"
+    ],
+    correct: "Người dân"
+  },
+  {
+    question: "Trong hội nhập quốc tế toàn diện, chủ thể nào được xem là lực lượng nòng cot?",
+    answers: [
+      "Nhà nước",
+      "Người dân",
+      "Doanh nghiệp và đội ngũ doanh nhân",
+      "Doanh nghiệp và đội ngũ trí thức"
+    ],
+    correct: "Doanh nghiệp và đội ngũ doanh nhân"
+  },
+  {
+    question: "Điền từ ngữ thích hợp vào chỗ chấm:\nNền kinh tế độc lập, tự chủ là nền kinh tế không bị ...(1).., phụ thuộc vào nước khác, người khác hoặc vào một tổ chức kinh tế nào đó về đường lối,chính sách phát triển, không bị bất cứ ai dùng những điều kiện kinh tế, tài chính, thương mại, viện trợ... để …(2)…, khống chế làm tổn hại ...(3)... quốcgia và ...(4)... cơ bản của dân tộc.",
+    answers: [
+      "(1) khống chế; (2) áp đặt; (3) lợi ích; (4) chù quyền",
+      "(1) lệ thuộc; (2) chi phối; (3) chủ quyền; (4)lọi ích",
+      "(1) lệ thuộc; (2) áp đặt; (3) chủ quyền; (4) lợi ích",
+      "(1) không chế; (2)chi phối; (3) lợi ích; (4)chủ quyền"
+    ],
+    correct: "(1) lệ thuộc; (2) áp đặt; (3) chủ quyền; (4) lợi ích"
+  },
+  {
+    question: "Nhiệm vụ nào được coi là nhiệm vụ trọng tâm nhằm xây dụng nền kinh tế độc lập, tự chủ, xây dựng cơ sở vật chất cho chủ nghia xã hội, giúp Việt Nam đi tắt, đón đầu, tránh nguy cơ tụt hậu xa hơn về kinh tế so với các nước khác?",
+    answers: [
+      "Đầy mạnh quan hệ kinh tế đối ngoại và chủ động hội nhập kinh tế quốc tế",
+      "Đây manh công nghiêp hoá, hiên dai hoá dât nuóc",
+      "Kết hợp chặt chẽ kinh tế với quốc phòng, an ninh và đối ngoại tronghội nhâp quốc tế",
+      "Đổi mới, hoàn thiện thể chế kinh tế, hành chính dể tǎng cưòng năng lựccạnh tranh của nền kinh tế"
+    ],
+    correct: "Đây manh công nghiêp hoá, hiên dai hoá dât nuóc"
+  }
+];
+
+let currentQuestionIndex = 0;
+let score = 0;
+let answered = false;
+let autoNextTimeout = null;
+
+const questionEl = document.getElementById('question');
+const answersEl = document.getElementById('answers');
+const progressEl = document.getElementById('progress');
+const resultEl = document.getElementById('result');
+const quizContainer = document.getElementById('quiz-container');
+
+const optionLetters = ['A', 'B', 'C', 'D'];
+const optionColors = {
+A: '#D0E8FF',
+B: '#D4EDDA',
+C: '#FFE5B4',
+D: '#F8D7DA',
+};
+
+function loadQuestion() {
+clearTimeout(autoNextTimeout);
+answered = false;
+resultEl.innerText = '';
+answersEl.innerHTML = '';
+const currentData = quizData[currentQuestionIndex];
+questionEl.innerText = `Câu ${currentQuestionIndex + 1}: ${currentData.question}`;
+progressEl.innerText = `Câu ${currentQuestionIndex + 1} / ${quizData.length}`;
+
+currentData.answers.forEach((answer, index) => {
+    const letter = optionLetters[index];
+    const btn = document.createElement('div');
+    btn.classList.add('answer-option', `answer-${letter}`);
+    btn.style.backgroundColor = optionColors[letter];
+    btn.style.color = '#000000';
+    btn.innerHTML = `<span class="answer-label">${letter}</span> ${answer}`;
+    btn.tabIndex = 0;
+    btn.onclick = () => selectAnswer(btn, answer);
+    btn.onkeydown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        btn.click();
+    }
+    };
+    answersEl.appendChild(btn);
+});
+
+quizContainer.focus();
+}
+
+function selectAnswer(btn, answer) {
+if (answered) return;
+answered = true;
+
+const allOptions = document.querySelectorAll('.answer-option');
+allOptions.forEach(opt => opt.style.pointerEvents = 'none');
+
+const correctAnswer = quizData[currentQuestionIndex].correct;
+
+if (answer === correctAnswer) {
+    btn.classList.add('correct');
+    score++;
+} else {
+    btn.classList.add('wrong');
+    allOptions.forEach(opt => {
+    // opt.innerText.trim().substring(2) bỏ ký tự A/B/C/D và dấu cách
+    if (opt.innerText.trim().substring(2) === correctAnswer) {
+        opt.classList.add('correct');
+    }
+    });
+}
+
+resultEl.innerText = 'Nhấn Enter hoặc Space để sang câu tiếp theo...';
+
+autoNextTimeout = setTimeout(() => {
+    goToNextQuestion();
+}, 1000);
+}
+
+function goToNextQuestion() {
+clearTimeout(autoNextTimeout);
+if (currentQuestionIndex < quizData.length - 1) {
+    currentQuestionIndex++;
+    loadQuestion();
+} else {
+    showResult();
+}
+}
+
+function goToPreviousQuestion() {
+clearTimeout(autoNextTimeout);
+if (currentQuestionIndex > 0) {
+    currentQuestionIndex--;
+    loadQuestion();
+}
+}
+
+quizContainer.addEventListener('keydown', function(e) {
+if ((e.key === 'Enter' || e.key === ' ') && answered) {
+    e.preventDefault();
+    goToNextQuestion();
+} else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    goToNextQuestion();
+} else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    goToPreviousQuestion();
+}
+});
+
+function showResult() {
+questionEl.innerText = '';
+answersEl.innerHTML = '';
+progressEl.innerText = '';
+resultEl.innerText = `Bạn đã hoàn thành bài quiz! Điểm của bạn là ${score} / ${quizData.length}.`;
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

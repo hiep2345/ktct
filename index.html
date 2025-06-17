@@ -1,0 +1,290 @@
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+    <meta charset="UTF-8" />
+    <title>Quiz Kinh Tế Chính Trị - 28 câu, nền tím pastel</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+        background: #400848; /* tím pastel */
+        color: #222;
+    }
+    #quiz-container {
+        max-width: 600px;
+        margin: auto;
+        background: #b753c6;
+        padding: 25px 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+        outline: none;
+    }
+    #question {
+        font-size: 1.3em;
+        font-weight: 600;
+        margin-bottom: 25px;
+        color: #222;
+    }
+    .answer-option {
+        color: #000000 !important;
+        padding: 15px 20px;
+        margin-bottom: 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        user-select: none;
+        font-size: 1em;
+        font-weight: 500;
+        border: 2px solid transparent;
+        transition: background-color 0.3s, border-color 0.3s;
+        display: flex;
+        align-items: center;
+    }
+    .answer-option:hover {
+        filter: brightness(0.95);
+    }
+    .answer-option:focus {
+        outline: none;
+        border-color: #ffcc00;
+        box-shadow: 0 0 8px #ffcc00;
+    }
+    .answer-A { background-color: #D0E8FF; }
+    .answer-B { background-color: #D4EDDA; }
+    .answer-C { background-color: #FFE5B4; }
+    .answer-D { background-color: #F8D7DA; }
+    .correct {
+        background-color: #4CAF50 !important;
+        color: white !important;
+        border-color: #388e3c !important;
+    }
+    .wrong {
+        background-color: #f44336 !important;
+        color: white !important;
+        border-color: #d32f2f !important;
+    }
+    #progress {
+        margin-top: 20px;
+        font-size: 0.95em;
+        color: #555;
+        font-style: italic;
+    }
+    #result {
+        font-size: 1.4em;
+        font-weight: 700;
+        color: #4CAF50;
+        text-align: center;
+        margin-top: 35px;
+    }
+    .answer-label {
+        font-weight: 700;
+        margin-right: 12px;
+        min-width: 20px;
+        text-align: center;
+    }
+    </style>
+    </head>
+    <body>
+
+    <div id="quiz-container" tabindex="0" aria-live="polite" aria-atomic="true" role="region">
+    <div id="question"></div>
+    <div id="answers"></div>
+    <div id="progress"></div>
+    <div id="result" aria-live="assertive"></div>
+    </div>
+
+    <script>
+    const quizData = [
+    { question: 'Thuật ngữ khoa học “kinh tế chính trị” xuất hiện lần đầu tiên vào năm nào?', answers: ['1610', '1615', '1612', '1618'], correct: '1615' },
+    { question: 'Tác phẩm Chuyên luận về Kinh tế chính trị của tác giả nào?', answers: ['Antoine de Montcheretien', 'William Stafford', 'William Petty', 'Thomas Mun'], correct: 'Antoine de Montcheretien' },
+    { question: 'Kinh tế chính trị chính thức trở thành một môn khoa học vào thời gian nào?', answers: ['Thế kỉ XVI', 'Thế kỉ XVII', 'Thế kỉ XVIII', 'Thế kỉ XIX'], correct: 'Thế kỉ XVIII' },
+    { question: 'Trường phái nào được ghi nhận là hệ thống lý luật kinh tế chính trị bước đầu nghiên cứu về nền sản xuất tư bản chủ nghĩa?', answers: ['Trường phái trọng tiền', 'Chủ nghĩa trọng nông', 'Chủ nghĩa trọng thương', 'Kinh tế chính trị tư sản cổ điển Anh'], correct: 'Chủ nghĩa trọng thương' },
+    { question: 'Chủ nghĩa trọng thương ra đời trong thời kì', answers: ['Tích lũy tư bản', 'Tích lũy nguyên thủy tư bản chủ nghĩa', 'Chủ nghĩa tư bản tự do cạnh tranh', 'Chủ nghĩa tư bản độc quyền'], correct: 'Tích lũy nguyên thủy tư bản chủ nghĩa' },
+    { question: 'Ý nghĩa của tư tưởng kinh tế của chủ nghĩa trọng thương là gì?', answers: ['Phát hiện ra quy luật kinh tế', 'Áp dụng quy luật kinh tế', 'Chưa phát hiện ra quy luật kinh tế', 'Phát hiện và áp dụng quy luật kinh tế'], correct: 'Chưa phát hiện ra quy luật kinh tế' },
+    { question: 'Chủ nghĩa trọng thương đặc biệt coi trọng vai trò hoạt động trong lĩnh vực', answers: ['Công nghiệp', 'Nông nghiệp', 'Lưu thông', 'Tiền tệ'], correct: 'Lưu thông' },
+    { question: 'Chủ nghĩa trọng thương lý giải nguồn gốc của lợi nhuận được tạo ra từ đâu?', answers: ['Nông nghiệp', 'Công nghiệp', 'Thương nghiệp', 'Dịch vụ'], correct: 'Thương nghiệp' },
+    { question: 'Chủ nghĩa trọng nông là hệ thống lý luận kinh tế đi sâu vào nghiên cứu và phân tích để rút ra lý luận kinh tế từ lĩnh vực nào?', answers: ['Nông nghiệp', 'Công nghiệp', 'Ngoại thương', 'Dịch vụ'], correct: 'Nông nghiệp' },
+    { question: 'Kinh tế chính trị tư sản cổ điển Anh hình thành và phát triển vào thời gian nào?', answers: ['Cuối thế kỉ XVI đến nửa đầu thế kỉ XVII', 'Cuối thế kỉ XVII đến nửa đầu thế kỉ XVIII', 'Cuối thế kỉ XVIII đến nửa đầu thế kỉ XIX', 'Cuối thế kỉ XIX đến nửa đầu thế kỉ XX'], correct: 'Cuối thế kỉ XVIII đến nửa đầu thế kỉ XIX' },
+    { question: 'W.Petty là người sáng lập ra trường phái', answers: ['Chủ nghĩa trọng thương', 'Kinh tế chính trị cổ điển Pháp', 'Kinh tế chính trị cổ điển Anh', 'Kinh tế chính trị tiểu tư sản'], correct: 'Kinh tế chính trị cổ điển Anh' },
+    { question: 'C.Mác đánh giá người sáng lập ra kinh tế chính trị cổ điển Anh là ai?', answers: ['William Petty', 'Adam Smith', 'David Ricardo', 'Thomas Malthus'], correct: 'William Petty' },
+    { question: 'Lý luận kinh tế chính trị của C.Mác được thừa kế và phát triển trực tiếp thành tựu của', answers: ['Chủ nghĩa trọng thương', 'Chủ nghĩa trọng nông', 'Kinh tế chính trị cổ điển ở Anh', 'Kinh tế chính trị tiểu tư sản'], correct: 'Kinh tế chính trị cổ điển ở Anh' },
+    { question: 'Lý luận kinh tế chính trị của Mác và Ph.Anghen được thể hiện tập trung và cô đọng nhất trong tác phẩm nào?', answers: ['Bản thảo kinh tế', 'Tư bản', 'Hệ tư tưởng Đức', 'Lao động làm thuê và tư bản'], correct: 'Tư bản' },
+    { question: 'Học thuyết nào giữ vị trí là hòn đá tảng trong toàn bộ lý luận kinh tế của C.Mác?', answers: ['Học thuyết giá trị thặng dư', 'Học thuyết tích lũy', 'Học thuyết giá trị', 'Học thuyết tuần hoàn và chu chuyển tư bản'], correct: 'Học thuyết giá trị thặng dư' },
+    { question: 'Kinh tế chính trị Mác Lê-nin bắt đầu phát triển vào thời gian nào?', answers: ['Từ đầu thế kỉ XIX', 'Từ giữa thế kỉ XIX', 'Từ cuối thế kỉ XIX', 'Từ đầu thế kỉ XX'], correct: 'Từ giữa thế kỉ XIX' },
+    { question: 'Đối tượng nghiên cứu của chủ nghĩa trọng thương thuộc lĩnh vực nào?', answers: ['Lưu thông', 'Sản xuất', 'Tiền tệ', 'Dịch vụ'], correct: 'Lưu thông' },
+    { question: 'Chủ nghĩa trọng nông có đối tượng nghiên cứu thuộc lĩnh vực nào?', answers: ['Nông nghiệp', 'Thương nghiệp', 'Công nghiệp', 'Dịch vụ'], correct: 'Nông nghiệp' },
+    { question: 'Đối tượng nghiên cứu của kinh tế chính trị cổ điển Anh là các cơ quan hệ kinh tế trong lĩnh vực nào?', answers: ['Sản xuất', 'Lưu thông', 'Dịch vụ', 'Tài chính'], correct: 'Sản xuất' },
+    { question: 'Đối tượng nghiên cứu của kinh tế chính trị Mác – Lenin là', answers: [
+        'Sản xuất của cải vật chất.',
+        'Quan hệ xã hội giữa người với người trong quá trình sản xuất.',
+        'Các quan hệ xã hội của sản xuất và trao đổi đặt trong mối liên hệ biện chứng với trình độ phát triển của lực lượng sản xuất và kiến trúc thượng tầng tương ứng của phương thức sản xuất nhất định.',
+        'Quan hệ sản xuất, phân phối, trao đổi và tiêu dùng.'
+    ], correct: 'Các quan hệ xã hội của sản xuất và trao đổi đặt trong mối liên hệ biện chứng với trình độ phát triển của lực lượng sản xuất và kiến trúc thượng tầng tương ứng của phương thức sản xuất nhất định.' },
+    { question: 'Mục đích nghiên cứu của kinh tế chính trị Mác – Lênin là gì?', answers: [
+        'Tìm ra các quy luật kinh tế chi phối sự vận động của phương thức sản xuất.',
+        'Phát hiện ra các quy luật kinh tế chi phối các quan hệ giữa người với người trong sản xuất và trao đổi',
+        'Vận dụng quy luật kinh tế chi phối quan hệ sản xuất và trao đổi.',
+        'Giải quyết hài hòa các lợi ích kinh tế.'
+    ], correct: 'Phát hiện ra các quy luật kinh tế chi phối các quan hệ giữa người với người trong sản xuất và trao đổi' },
+    { question: 'Kinh tế chính trị Mác – Lênin có nhiệm vụ nghiên cứu là', answers: [
+        'Tìm ra bản chất của lực lượng sản xuất.',
+        'Tìm ra bản chất của quan hệ sản xuất xã hội.',
+        'Tìm ra các quy luật kinh tế và sự tác động của nó nhằm ứng dụng một cách có hiệu quả trong thực tiễn.',
+        'Tìm ra các quy luật kinh tế nhằm đạt được hiệu quả kinh tế mong muốn.'
+    ], correct: 'Tìm ra bản chất của quan hệ sản xuất xã hội.' },
+    { question: 'Quy luật kinh tế là', answers: [
+        'Những mối liên hệ phản ánh bản chất, khách quan, lặp đi lặp lại của các hiện tượng và quá trình kinh tế.',
+        'Phản ánh bản chất của các hiện tượng trong xã hội.',
+        'Khách quan, tồn tại trong mọi phương thức sản xuất.',
+        'Chủ quan, tồn tại trong mọi phương thức sản xuất.'
+    ], correct: 'Những mối liên hệ phản ánh bản chất, khách quan, lặp đi lặp lại của các hiện tượng và quá trình kinh tế.' },
+    { question: 'Điền từ ngữ thích hợp vào chỗ chấm:\nQuy luật kinh tế tồn tại ….(1)…, không phụ thuộc vào ý chí của con người, con người không thể …(2)… quy luật kinh tế, nhưng có thể …(3)… và …(4)… quy luật kinh tế.', answers: [
+        '(1) khách quan, (2) bỏ qua, (3) nhận thức, (4) hành động',
+        '(1) khách quan, (2) thủ tiêu, (3) nhận thức, (4) vận dụng',
+        '(1) chủ quan, (2) bỏ qua, (3) nhận thức, (4) hành động',
+        '(1) chủ quan, (2) thủ tiêu, (3) nhận thức, (4) vận dụng'
+    ], correct: '(1) khách quan, (2) thủ tiêu, (3) nhận thức, (4) vận dụng' },
+    { question: 'Điền từ ngữ thích hợp vào chỗ chấm:\nChính sách kinh tế là sản phẩm …(1)… của con người được hình thành trên cơ sở …(2)… các quy luật kinh tế.', answers: [
+        '(1) khách quan, (2) vận dụng',
+        '(1) chủ quan, (2) vận dụng',
+        '(1) khách quan, (2) nhận thức',
+        '(1) chủ quan, (2) nhận thức'
+    ], correct: '(1) chủ quan, (2) vận dụng' },
+    { question: 'Kinh tế chính trị Mác – Lênin có các chức năng nào?', answers: [
+        'Nhận thức, thực tiễn, tư tưởng, giáo dục',
+        'Nhận thức, thực tiễn, tư tưởng, phương pháp luận',
+        'Nhận thức, thực tiễn, xã hội, phương pháp luận',
+        'Nhận thức, thực tiễn, giáo dục, xã hội'
+    ], correct: 'Nhận thức, thực tiễn, tư tưởng, phương pháp luận' },
+    { question: 'Phương pháp quan trọng nhất trong nghiên cứu kinh tế chính trị Mác – Lênin là', answers: [
+        'Trừu tượng hóa khoa học',
+        'Logic và lịch sử',
+        'Phân tích và tổng hợp',
+        'Mô hình hóa'
+    ], correct: 'Trừu tượng hóa khoa học' },
+    { question: 'Phương pháp trừu tượng hóa khoa học trong nghiên cứu chính trị Mác – Lênin đòi hỏi', answers: [
+        'Quá trình nghiên cứu đi từ trừu tượng đến cụ thể, nêu lên những khái niệm, phạm trù, vạch ra những mối quan hệ giữa chúng, gạt bỏ những bộ phận phức tạp của đối tượng nghiên cứu.',
+        'Gạt bỏ các yếu tố ngẫu nhiên, tạm thời, gián tiếp, trên cơ sở đó tách ra được những dấu hiệu điển hình, bền vững, ổn định, trực tiếp của đối tượng nghiên cứu.',
+        'Quá trình nghiên cứu đi từ cụ thể đến trừu tượng, nhờ đó nêu lên những khái niệm, phạm trù, vạch ra những mối quan hệ giữa chúng và ngược lại.',
+        'Quá trình nghiên cứu đi từ trừu tượng đến cụ thể, nhờ đó nêu lên những khái niệm, phạm trù, vạch ra những mỗi quan hệ giữa chúng và ngược lại.'
+    ], correct: 'Gạt bỏ các yếu tố ngẫu nhiên, tạm thời, gián tiếp, trên cơ sở đó tách ra được những dấu hiệu điển hình, bền vững, ổn định, trực tiếp của đối tượng nghiên cứu.' }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answered = false;
+    let autoNextTimeout = null;
+
+    const questionEl = document.getElementById('question');
+    const answersEl = document.getElementById('answers');
+    const progressEl = document.getElementById('progress');
+    const resultEl = document.getElementById('result');
+    const quizContainer = document.getElementById('quiz-container');
+
+    const optionLetters = ['A', 'B', 'C', 'D'];
+    const optionColors = {
+    A: '#D0E8FF',
+    B: '#D4EDDA',
+    C: '#FFE5B4',
+    D: '#F8D7DA',
+    };
+
+    function loadQuestion() {
+    clearTimeout(autoNextTimeout);
+    answered = false;
+    resultEl.innerText = '';
+    answersEl.innerHTML = '';
+    const currentData = quizData[currentQuestionIndex];
+    questionEl.innerText = `Câu ${currentQuestionIndex + 1}: ${currentData.question}`;
+    progressEl.innerText = `Câu ${currentQuestionIndex + 1} / ${quizData.length}`;
+
+    currentData.answers.forEach((answer, index) => {
+        const letter = optionLetters[index];
+        const btn = document.createElement('div');
+        btn.classList.add('answer-option', `answer-${letter}`);
+        btn.style.backgroundColor = optionColors[letter];
+        btn.style.color = '#000000';
+        btn.innerHTML = `<span class="answer-label">${letter}</span> ${answer}`;
+        btn.tabIndex = 0;
+        btn.onclick = () => selectAnswer(btn, answer);
+        btn.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            btn.click();
+        }
+        };
+        answersEl.appendChild(btn);
+    });
+
+    quizContainer.focus();
+    }
+
+    function selectAnswer(btn, answer) {
+    if (answered) return;
+    answered = true;
+
+    const allOptions = document.querySelectorAll('.answer-option');
+    allOptions.forEach(opt => opt.style.pointerEvents = 'none');
+
+    const correctAnswer = quizData[currentQuestionIndex].correct;
+
+    if (answer === correctAnswer) {
+        btn.classList.add('correct');
+        score++;
+    } else {
+        btn.classList.add('wrong');
+        allOptions.forEach(opt => {
+        // opt.innerText.trim().substring(2) bỏ ký tự A/B/C/D và dấu cách
+        if (opt.innerText.trim().substring(2) === correctAnswer) {
+            opt.classList.add('correct');
+        }
+        });
+    }
+
+    resultEl.innerText = 'Nhấn Enter hoặc Space để sang câu tiếp theo...';
+
+    autoNextTimeout = setTimeout(() => {
+        goToNextQuestion();
+    }, 1000);
+    }
+
+    function goToNextQuestion() {
+    clearTimeout(autoNextTimeout);
+    if (currentQuestionIndex < quizData.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion();
+    } else {
+        showResult();
+    }
+    }
+
+    function goToPreviousQuestion() {
+    clearTimeout(autoNextTimeout);
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    }
+    }
+
+    quizContainer.addEventListener('keydown', function(e) {
+    if ((e.key === 'Enter' || e.key === ' ') && answered) {
+        e.preventDefault();
+        goToNextQuestion();
+    } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        goToNextQuestion();
+    } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goToPreviousQuestion();
+    }
+    });
+
+    function showResult() {
+    questionEl.innerText = '';
+    answersEl.innerHTML = '';
+    progressEl.innerText = '';
+    resultEl.innerText = `Bạn đã hoàn thành bài quiz! Điểm của bạn là ${score} / ${quizData.length}.`;
+    }
+
+    loadQuestion();
+    </script>
+    </body>
+    </html>

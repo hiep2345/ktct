@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<title>Quiz Kinh Tế Chính Trị - Chương 4 - Độc quyền và chủ nghĩa tư bản độc quyền nhà nước</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+    background: #400848; /* tím pastel */
+    color: #222;
+}
+#quiz-container {
+    max-width: 600px;
+    margin: auto;
+    background: #b753c6;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+    outline: none;
+}
+#question {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #222;
+}
+.answer-option {
+    color: #000000 !important;
+    padding: 15px 20px;
+    margin-bottom: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 1em;
+    font-weight: 500;
+    border: 2px solid transparent;
+    transition: background-color 0.3s, border-color 0.3s;
+    display: flex;
+    align-items: center;
+}
+.answer-option:hover {
+    filter: brightness(0.95);
+}
+.answer-option:focus {
+    outline: none;
+    border-color: #ffcc00;
+    box-shadow: 0 0 8px #ffcc00;
+}
+.answer-A { background-color: #D0E8FF; }
+.answer-B { background-color: #D4EDDA; }
+.answer-C { background-color: #FFE5B4; }
+.answer-D { background-color: #F8D7DA; }
+.correct {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border-color: #388e3c !important;
+}
+.wrong {
+    background-color: #f44336 !important;
+    color: white !important;
+    border-color: #d32f2f !important;
+}
+#progress {
+    margin-top: 20px;
+    font-size: 0.95em;
+    color: #555;
+    font-style: italic;
+}
+#result {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #4CAF50;
+    text-align: center;
+    margin-top: 35px;
+}
+.answer-label {
+    font-weight: 700;
+    margin-right: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div id="quiz-container" tabindex="0" aria-live="polite" aria-atomic="true" role="region">
+<div id="question"></div>
+<div id="answers"></div>
+<div id="progress"></div>
+<div id="result" aria-live="assertive"></div>
+</div>
+
+<script>
+const quizData = [
+{
+    question: "Sự hình thành các tổ chức độc quyền dựa trên cơ sở",
+    answers: [
+      "sản xuất nhỏ phân tán.",
+      "tích tụ tập trung sản xuất và sự ra đời của các Xí nghiệp quy mô lá.",
+      "sự xuất hiện các thành tựu mới của khoa học.",
+      "sự hoàn thiện quan hệ sản xuất – tư bản chủ nghĩa."
+    ],
+    correct: "tích tụ tập trung sản xuất và sự ra đời của các Xí nghiệp quy mô lá."
+  },
+  {
+    question: "Sự ra đời của tư bản tài chính là kết quả của sự phát triển",
+    answers: [
+      "độc quyền ngân hàng.",
+      "sự phát triển của thị trường tài chính.",
+      "độc quyền công nghiệp.",
+      "quá trình xâm nhập liên kết độc quyền ngân hàng với độc quyền"
+    ],
+    correct: "quá trình xâm nhập liên kết độc quyền ngân hàng với độc quyền"
+  },
+  {
+    question: "Vai trò mới của ngân hàng trong giai đoạn chủ nghĩa tư bản độc quyền là gì?",
+    answers: [
+      "Đầu tư tư bản",
+      "Khống chế hoạt động của nền kinh tế tư bản chủ nghĩa",
+      "Trung tâm tín dụng",
+      "Trung tâm thanh toán"
+    ],
+    correct: "Khống chế hoạt động của nền kinh tế tư bản chủ nghĩa"
+  },
+  {
+    question: "“Chế độ tham dự” của tư bản tài chính được thiết lập do",
+    answers: [
+      "quyết định của nhà nước.",
+      "yêu cầu tổ chức của các ngân hàng.",
+      "yêu cầu cảu các tổ chức độc quyền công nghiệp",
+      "số cổ phiếu khống chế nắm công ty mẹ, con, cháu"
+    ],
+    correct: "số cổ phiếu khống chế nắm công ty mẹ, con, cháu"
+  },
+  {
+    question: "Xuất khẩu tư bản là đặc điểm của",
+    answers: [
+      "các nước giàu có.",
+      "chủ nghĩa tư bản.",
+      "chủ nghĩa tư bản độc quyền.",
+      "chủ nghĩa tư bản tự do cạnh tranh,"
+    ],
+    correct: "chủ nghĩa tư bản độc quyền."
+  },
+{
+    question: "Trong chủ nghĩa tư bản độc quyền, vì sao cạnh tranh không bị thủ tiêu?",
+    answers: [
+      "Vì các tổ chức độc quyền cạnh tranh với nhau",
+      "Vì tổ chức độc quyền cạnh tranh với các Công ty ngoài độc quyền",
+      "Vì các xí nghiệp trong nội bộ tổ chức độc quyền cạnh tranh với nhau",
+      "Vì cạnh tranh là quy luật khách quan của kinh tế hàng hoá"
+    ],
+    correct: "Vì cạnh tranh là quy luật khách quan của kinh tế hàng hoá"
+  },
+  {
+    question: "Các cuộc xâm chiếm thuộc địa của các nước đế quốc diễn ra mạnh mẽ vào thời gian nào?",
+    answers: [
+      "Thế kỉ XVII",
+      "Cuối thế kỉ XVII - đầu thế kỉ XVIII",
+      "Thế kỉ XIX",
+      "Cuối thế kỉ XIX - đầu thế kỉ XX"
+    ],
+    correct: "Cuối thế kỉ XIX - đầu thế kỉ XX"
+  },
+  {
+    question: "Cuối thế kỉ XIX đầu thế kỉ XX, nước đế quốc có thuộc địa nhiều nhất là",
+    answers: [
+      "Anh",
+      "Pháp",
+      "Nga",
+      "Mỹ"
+    ],
+    correct: "Anh"
+  },
+  {
+    question: "Các tổ chức độc quyền sử dụng loại giá cả nào?",
+    answers: [
+      "Giá cả chính trị",
+      "Giá cả độc quyền cao",
+      "Giá cả độc quyền thấp",
+      "Giá cả sản xuất"
+    ],
+    correct: "Giá cả độc quyền cao"
+  },
+  {
+    question: "Mục đích của các tổ chức độc quyền là",
+    answers: [
+      "chiếm đoạt giá trị thặng dư của người khác.",
+      "khống chế thị trường.",
+      "gây thiệt hại cho các đối thủ cạnh tranh.",
+      "củng cố vai trò của tổ chức độc quyền."
+    ],
+    correct: "khống chế thị trường."
+  },
+  {
+    question: "Nhà nước tư sản đảm nhận đầu tư vào các ngành như thế nào?",
+    answers: [
+      "Đầu tư lớn, thu hồi vốn nhanh, lợi nhuận ít",
+      "Đầu tư lớn, thu hồi vốn chậm, lợi nhuận cao",
+      "Đầu tư không lớn, thu hồi vốn nhanh, lợi nhuận cao",
+      "Đầu tư lớn, thu hồi vốn chậm, lợi nhuận ít"
+    ],
+    correct: "Đầu tư lớn, thu hồi vốn chậm, lợi nhuận ít"
+  },
+  {
+    question: "Bản chất của chủ nghĩa tư bản độc quyền nhà nước là",
+    answers: [
+      "sự kết hợp tổ chức độc quyền tư nhân và nhà nước tư sản.",
+      "nhà nước tư sản can thiệp vào kinh tế, chi phối độc quyền.",
+      "các tổ chức độc quyền phụ thuộc vào nhà nước.",
+      "sự thoả hiệp giữa nhà nước và tổ chức độc quyền."
+    ],
+    correct: "sự kết hợp tổ chức độc quyền tư nhân và nhà nước tư sản."
+  },
+  {
+    question: "Sự ra đời của chủ nghĩa tư bản độc quyền nhà nước nhằm mục đích gì?",
+    answers: [
+      "Phục vụ lợi ích của chủ nghĩa tư bản",
+      "Phục vụ lợi ích của tổ chức độc quyền tư nhân",
+      "Phục vụ lợi ích của nhà nước tư sản",
+      "Phục vụ lợi ích của tổ chức độc quyền tư nhân và cứu nguy cho chủ nghĩa tư bản"
+    ],
+    correct: "Phục vụ lợi ích của tổ chức độc quyền tư nhân và cứu nguy cho chủ nghĩa tư bản"
+  },
+  {
+    question: "Sở hữu độc quyền nhà nước là sự kết hợp của",
+    answers: [
+      "sở hữu nhà nước và sở hữu tư nhân chủ nghĩa tư bản.",
+      "sở hữu nhà nước và sở hữu độc quyền tư nhân.",
+      "sở hữu của nhà nước tư sản.",
+      "sở hữu của nhiều nước tư bản."
+    ],
+    correct: "sở hữu nhà nước và sở hữu độc quyền tư nhân."
+  },
+  {
+    question: "Trong chủ nghĩa tư bản ngày nay, trùm tài chính thống trị nền kinh tế thông qua",
+    answers: [
+      "“chế độ tham dự.”",
+      "“chế độ uỷ nhiệm”.",
+      "kết hợp “chế độ tham dự” và “chế độ uỷ nhiệm”.",
+      "các tổ chức tài chính quốc tế."
+    ],
+    correct: "kết hợp “chế độ tham dự” và “chế độ uỷ nhiệm”."
+  },
+  {
+    question: "Lợi nhuận là gì?",
+    answers: [
+      "Là tỉ lệ phần lãi trên tổng số tư bản",
+      "Là tiền công mà doanh nhân tự trả cho mình",
+      "Là hình thức biến tướng của giá trị thặng dư",
+      "Là hiệu số giữa giá trị hàng hoá và chi phí sản xuất"
+    ],
+    correct: "Là hình thức biến tướng của giá trị thặng dư"
+  },
+  {
+    question: "Độc quyền là sự liên minh giữa các doanh nghiệp lớn,... nhằm thu",
+    answers: [
+      "giá trị thặng dư tuyệt đối.",
+      "giá trị thặng dư tương đối.",
+      "lợi nhuận bình quân.",
+      "lợi nhuận độc quyền cao."
+    ],
+    correct: "lợi nhuận độc quyền cao."
+  },
+  {
+    question: "Yếu tố nào dưới đây không phải là nguyên nhân dẫn đến sự hình thành độc quyền?",
+    answers: [
+      "Sự phát triển của lực lượng sản xuất",
+      "Sự thủ tiêu cạnh tranh trong giai đoạn độc quyền",
+      "Khủng hoảng kinh tế trong toàn bộ nền sản xuất tư bản chủ nghĩa",
+      "Sự phát triển của hệ thống tín dụng tư bản chủ nghĩa"
+    ],
+    correct: "Sự thủ tiêu cạnh tranh trong giai đoạn độc quyền"
+  },
+  {
+    question: "Yếu tố nào dưới đây không phải là nguồn gốc lợi nhuận của lợi nhuận độc quyền cao?",
+    answers: [
+      "Lao động của công nhân làm việc trong các xí nghiệp độc quyền",
+      "Lao động không công của công nhân làm việc trong các xí nghiệp ngoài độc quyền",
+      "Giá trị thặng dư của các nhà tư bản vừa và nhỏ thu được",
+      "Lao động thặng dư và đôi khi cả phần lao động tất yếu của những người sản xuất nhỏ, nhân dân lao động ở các nước tư bản và các nước thuộc địa và phụ thuộc"
+    ],
+    correct: "Giá trị thặng dư của các nhà tư bản vừa và nhỏ thu được"
+  },
+  {
+    question: "Các tổ chức độc quyền áp đặt giá cả độc quyền như thế nào?",
+    answers: [
+      "Giá cả cao khi bán và giá cả thấp khi mua",
+      "Giá cả thấp khi bán và giá cả cao khi mua",
+      "Giá cả cao khi bán và giá cả thị trường khi mua",
+      "Giá cả thị trường khi bán và giá cả thấp khi mua"
+    ],
+    correct: "Giá cả cao khi bán và giá cả thấp khi mua"
+  },
+  {
+    question: "Độc quyền nhà nước trong chủ nghĩa tư bản hình thành nhằm",
+    answers: [
+      "phục vụ lợi ích của các tổ chức ngoài độc quyền, duy trì sự phát triển của tự do cạnh tranh trong sản xuất.",
+      "phục vụ lợi ích của các tổ chức độc quyền tư nhân và tiếp tục duy trì, phát triển chủ nghĩa tư bản.",
+      "giảm bớt lợi ích của các tổ chức độc quyền tư nhân, thay đổi nền sản xuất tư bản chủ nghĩa.",
+      "gia tăng lợi ích của tất cả chủ thể trong nền kinh tế, duy trì sự bình đẳng trong cạnh tranh."
+    ],
+    correct: "phục vụ lợi ích của các tổ chức độc quyền tư nhân và tiếp tục duy trì, phát triển chủ nghĩa tư bản."
+  },
+  {
+    question: "Loại cạnh tranh nào dưới đây không thể hiện sự cạnh tranh giữa các tổ chức độc quyền?",
+    answers: [
+      "Cạnh tranh giữa các tổ chức độc quyền với các doanh nghiệp ngoài độc quyền",
+      "Cạnh tranh giữa các tổ chức độc quyền với nhau",
+      "Cạnh tranh giữa các chủ thể sản xuất kinh doanh nhỏ và vừa",
+      "Cạnh tranh trong nội bộ các tổ chức độc quyền"
+    ],
+    correct: "Cạnh tranh giữa các chủ thể sản xuất kinh doanh nhỏ và vừa"
+  },
+  {
+    question: "Khẳng định nào dưới đây là sai khi nói về quan hệ cạnh tranh trong trạng thái độc quyền?",
+    answers: [
+      "Độc quyền không thủ tiêu cạnh tranh, trái lại làm cho cạnh tranh trở nên đa dạng, gay gắt hơn.",
+      "Độc quyền thủ tiêu cạnh tranh, làm cho cạnh tranh giữa các chủ thể sản xuất trở nên bình đẳng.",
+      "Độc quyền sinh ra từ cạnh tranh tự do.",
+      "Cạnh tranh và độc quyền luôn cùng tồn tại song hành với nhau."
+    ],
+    correct: "Độc quyền thủ tiêu cạnh tranh, làm cho cạnh tranh giữa các chủ thể sản xuất trở nên bình đẳng."
+  },
+  {
+    question: "Dưới chủ nghĩa tư bản, tích tụ và tập trung sản xuất cao, biểu hiện ở",
+    answers: [
+      "số lượng các xí nghiệp tư bản lớn chiếm tỉ trọng nhỏ trong nền kinh tế, nhưng nắm giữ và chi phối thị trường.",
+      "số lượng các xí nghiệp tư bản lớn chiếm tỉ trọng lớn trong nền kinh tế, nắm giữ và chi phối thị trường.",
+      "số lượng các xí nghiệp tư bản nhỏ chiếm tỉ trọng lớn trong nền kinh tế, nắm giữ và chi phối thị trường.",
+      "số lượng các xí nghiệp tư bản nhỏ chiếm tỉ trọng lớn trong nền kinh tế, không nắm giữ và chi phối thị trường."
+    ],
+    correct: "số lượng các xí nghiệp tư bản lớn chiếm tỉ trọng nhỏ trong nền kinh tế, nhưng nắm giữ và chi phối thị trường."
+  },
+  {
+    question: "Các hình thức liên kết của tổ chức độc quyền là",
+    answers: [
+      "liên kết ngang và liên kết dọc.",
+      "liên kết giữa xí nghiệp độc quyền với xí nghiệp ngoài độc quyền.",
+      "liên kết giữa các xí nghiệp ngoài độc quyền với nhau.",
+      "liên kết dọc và liên kết giữa các xí nghiệp ngoài độc quyền."
+    ],
+    correct: "liên kết ngang và liên kết dọc."
+  },
+  {
+    question: "Chọn phương án đúng về thứ tự từ thấp đến cao của các hình thức tổ chức độc quyền?",
+    answers: [
+      "Syndicate, cartel, trust, consortium",
+      "Cartel, syndicate, trust, consortium",
+      "Trust, cartel, syndicate, consortium",
+      "Cartel, consortium, syndicate, trust"
+    ],
+    correct: "Cartel, syndicate, trust, consortium"
+  },
+  {
+    question: "Sự ra đời của tư bản tài chính là kết quả của sự phát triển",
+    answers: [
+      "độc quyền ngân hàng.",
+      "sự phát triển của thị trường tài chính.",
+      "độc quyền công nghiệp.",
+      "quá trình xâm nhập liên kết độc quyền ngân hàng với độc quyền công nghiệp."
+    ],
+    correct: "quá trình xâm nhập liên kết độc quyền ngân hàng với độc quyền công nghiệp."
+  },
+  {
+    question: "Mục đích của xuất khẩu tư bản là",
+    answers: [
+      "nhằm thu được giá trị thặng dư và các nguồn lợi nhuận khác ở các nước nhập khẩu tư bản.",
+      "xuất khẩu hàng hoá ra nước ngoài để bán, nhằm thu được lợi nhuận cao hơn.",
+      "nhằm thúc đẩy sản xuất và trao đổi giữa các quốc gia trong nền kinh tế thế giới.",
+      "nhằm thu được giá trị thặng dư và các nguồn lợi nhuận khác ở các nước xuất khẩu tư bản."
+    ],
+    correct: "nhằm thu được giá trị thặng dư và các nguồn lợi nhuận khác ở các nước nhập khẩu tư bản."
+  },
+  {
+    question: "Hình thức xuất khẩu tư bản để xây dựng xí nghiệp mới hoặc mua lại những xí nghiệp đang hoạt động ở nước nhận đầu tư là",
+    answers: [
+      "đầu tư gián tiếp.",
+      "đầu tư trực tiếp.",
+      "viện trợ không hoàn lại.",
+      "cho vay để thu lợi tức."
+    ],
+    correct: "đầu tư trực tiếp."
+  },
+  {
+    question: "Hình thức đầu tư thông qua việc cho vay để thu lợi tức, mua cổ phần, cổ phiếu, trái phiếu, các giấy tờ có giá khác mà nhà đầu tư không trực tiếp tham gia quản lí hoạt động đầu tư là",
+    answers: [
+      "đầu tư gián tiếp.",
+      "đầu tư trực tiếp.",
+      "viện trợ không hoàn lại.",
+      "hỗ trợ phát triển chính thức."
+    ],
+    correct: "đầu tư gián tiếp."
+  },
+{ 
+  question: "Biểu hiện mới của tích tụ và tập trung tư bản là", 
+  answers: [
+    "sự xuất hiện của các tổ chức độc quyền: cartel, syndicate.",
+    "sự xuất hiện của các tổ chức độc quyền trust, consortium.",
+    "sự xuất hiện của các tổ chức độc quyền tư nhân, các doanh nghiệp quy mô lớn.",
+    "sự xuất hiện của các công ty độc quyền xuyên quốc gia bên cạnh sự phát triển của các xí nghiệp vừa và nhỏ."
+  ], 
+  correct: "sự xuất hiện của các công ty độc quyền xuyên quốc gia bên cạnh sự phát triển của các xí nghiệp vừa và nhỏ." 
+},
+{ 
+  question: "Ở các nước tư bản phát triển hiện nay, nguyên nhân nào đã dẫn đến sự xuất hiện của các doanh nghiệp vừa và nhỏ?", 
+  answers: [
+    "Việc ứng dụng thành tựu khoa học và công nghệ cho phép tiêu chuẩn hóa và chuyên môn hoá sản xuất sâu, dẫn đến hình thành hệ thống gia công các doanh nghiệp nhỏ có những thế mạnh riêng",
+    "Sự tích tụ và tập trung sản xuất dẫn đến hình thành các xí nghiệp quy mô vừa và nhỏ",
+    "Các doanh nghiệp có quy mô lớn bị phá sản, các doanh nghiệp vừa và nhỏ có cơ hội nắm bắt nhu cầu của thị trường",
+    "Các doanh nghiệp quy mô nhỏ có lợi thế về vốn, độc lập trong sản xuất kinh doanh"
+  ], 
+  correct: "Việc ứng dụng thành tựu khoa học và công nghệ cho phép tiêu chuẩn hóa và chuyên môn hoá sản xuất sâu, dẫn đến hình thành hệ thống gia công các doanh nghiệp nhỏ có những thế mạnh riêng" 
+},
+{ 
+  question: "Biểu hiện mới của xuất khẩu tư bản thể hiện ở đại bộ phận dòng đầu tư tư bản", 
+  answers: [
+    "chảy qua chảy lại giữa các nước đang phát triển với nhau.",
+    "từ các nước tư bản phát triển sang các nước kém phát triển.",
+    "chảy qua chảy lại giữa các nước tư bản phát triển với nhau.",
+    "từ các nước đang phát triển sang các nước phát triển."
+  ], 
+  correct: "chảy qua chảy lại giữa các nước tư bản phát triển với nhau." 
+},
+{ 
+  question: "Biểu hiện mới của xuất khẩu tư bản thể hiện ở chủ thể xuất khẩu tư bản có sự thay đổi lớn, trong đó nổi bật là", 
+  answers: [
+    "các công ty xuyên quốc gia; sự xuất hiện nhiều chủ thể xuất khẩu tư bản từ các nước đang phát triển.",
+    "các công ty xuyên quốc gia; sự xuất hiện nhiều chủ thể xuất khẩu tư bản từ các nước phát triển.",
+    "Sự xuất hiện nhiều chủ thể xuất khẩu tư bản từ các nước phát triển, các doanh nghiệp vừa và nhỏ",
+    "Sự xuất hiện nhiều chủ thể xuất khẩu tư bản từ các nước đang phát triển; các doanh nghiệp quy mô vừa và nhỏ"
+  ], 
+  correct: "các công ty xuyên quốc gia; sự xuất hiện nhiều chủ thể xuất khẩu tư bản từ các nước đang phát triển." 
+},
+{ 
+  question: "Khẳng định nào dưới đây là sai khi nói về vai trò tích cực của chủ nghĩa tư bản", 
+  answers: [
+    "Chủ nghĩa tư bản chuyển nền sản xuất nhỏ thành nền sản xuất lớn hiện đại",
+    "Chủ nghĩa tư bản thực hiện xã hội hóa sản xuất",
+    "Chủ nghĩa tư bản thúc đẩy lực lượng sản xuất phát triển nhanh chóng",
+    "Chủ nghĩa tư bản thực hiện tư nhân hóa sản xuất"
+  ], 
+  correct: "Chủ nghĩa tư bản thực hiện tư nhân hóa sản xuất" 
+},
+{ 
+  question: "Nhận định nào dưới đây là sai khi nói về giới hạn phát triển của chủ nghĩa tư bản?", 
+  answers: [
+    "Mục đích của nền sản xuất tư bản chủ nghĩa vẫn tập trung chủ yếu vì lợi ích của thiểu số giai cấp tư sản.",
+    "Mục đích của nền sản xuất tư bản chủ nghĩa hiện nay tập trung chủ yếu vì lợi ích chung của tất cả các giai cấp.",
+    "Chủ nghĩa tư bản đã và đang tiếp tục tham gia gây chiến tranh và xung đột ở nhiều nơi trên thế giới.",
+    "Sự phân hoá giàu-nghèo trong lòng các nước tư bản và có xu hướng ngày càng sâu sắc."
+  ], 
+  correct: "Mục đích của nền sản xuất tư bản chủ nghĩa hiện nay tập trung chủ yếu vì lợi ích chung của tất cả các giai cấp." 
+},
+{ 
+  question: "Mục đích chủ yếu của các conglomerate là", 
+  answers: [
+    "thu lợi nhuận từ sản xuất.",
+    "thu lợi nhuận từ dịch vụ cho sản xuất.",
+    "thu lợi nhuận từ kinh doanh chứng khoán.",
+    "thu lợi nhuận từ sản xuất kinh doanh."
+  ], 
+  correct: "thu lợi nhuận từ kinh doanh chứng khoán." 
+},
+{ 
+  question: "Concern là hình thức tổ chức độc quyền", 
+  answers: [
+    "trong nội bộ ngành, gồm nhiều xí nghiệp có liên quan với nhau và được phân bố ở nhiều nước.",
+    "đa ngành, gồm hàng trăm xí nghiệp có quan hệ với những ngành khác nhau và được phân bố ở nhiều nước.",
+    "đa ngành, gồm một số ít xí nghiệp có quan hệ với những ngành khác nhau và được phân bố trong một quốc gia.",
+    "trong nội bộ ngành, gồm một số ít xí nghiệp có quan hệ với những ngành khác nhau và được phân bố trong một quốc gia."
+  ], 
+  correct: "đa ngành, gồm hàng trăm xí nghiệp có quan hệ với những ngành khác nhau và được phân bố ở nhiều nước." 
+},
+{ 
+  question: "Các xí nghiệp tư bản tham gia trust trở thành những cổ đông để", 
+  answers: [
+    "thu lợi nhuận theo số lượng hàng hoá.",
+    "thu lợi nhuận bình quân.",
+    "thu lợi nhuận theo số lượng cổ phần.",
+    "thu lợi nhuận tối đa."
+  ], 
+  correct: "thu lợi nhuận theo số lượng cổ phần." 
+},
+{ 
+  question: "Hình thức tổ chức độc quyền trong đó các xí nghiệp tư bản lớn kí các hiệp nghị thỏa thuận với nhau về giá cả, sản lượng hàng hóa, thị trường tiêu thụ, kì hạn thanh toán là", 
+  answers: [
+    "cartel",
+    "syndicate",
+    "trust",
+    "consortium"
+  ], 
+  correct: "cartel" 
+},
+{ 
+  question: "Khẳng định nào dưới đây là sai khi nói về cartel?", 
+  answers: [
+    "Các xí nghiệp tham gia cartel vẫn độc lập cả về sản xuất và lưu thông hàng hóa",
+    "Các thành viên tham gia cartel chỉ cam kết thực hiện đúng hiệp nghị đã kí, nếu làm sai sẽ bị phạt tiền theo quy định của hiệp nghị.",
+    "Cartel là liên minh độc quyền vững chắc.",
+    "Cartel thường tan vỡ trước kì hạn."
+  ], 
+  correct: "Cartel là liên minh độc quyền vững chắc." 
+},
+{ 
+  question: "Các xí nghiệp tư bản tham gia syndicate thì", 
+  answers: [
+    "vẫn giữ độc lập về sản xuất, chỉ không độc lập ở khâu lưu thông hàng hoá.",
+    "vẫn giữ độc lập về lưu thông hàng hoá, mất độc lập ở khâu sản xuất.",
+    "độc lập cả về sản xuất và lưu thông hàng hoá.",
+    "không độc lập cả về sản xuất và lưu thông hàng hoá."
+  ], 
+  correct: "vẫn giữ độc lập về sản xuất, chỉ không độc lập ở khâu lưu thông hàng hoá." 
+},
+{ 
+  question: "Mục đích của syndicate là", 
+  answers: [
+    "thống nhất việc sản xuất và tiêu thụ hàng hoá để thu được lợi nhuận theo số lượng cổ phần.",
+    "thống nhất đầu mối mua và bán để mua nguyên liệu với giá rẻ, bán hàng hoá với giá đắt nhằm thu được lợi nhuận bình quân.",
+    "thống nhất đầu mối mua và bán để mua nguyên liệu với giá rẻ bán hàng hoá với giá đắt nhằm thu được lợi nhuận độc quyền cao.",
+    "thống nhất việc sản xuất hàng hoá để thu được lợi nhuận độc quyền cao"
+  ], 
+  correct: "thống nhất đầu mối mua và bán để mua nguyên liệu với giá rẻ bán hàng hoá với giá đắt nhằm thu được lợi nhuận độc quyền cao." 
+}
+];
+
+let currentQuestionIndex = 0;
+let score = 0;
+let answered = false;
+let autoNextTimeout = null;
+
+const questionEl = document.getElementById('question');
+const answersEl = document.getElementById('answers');
+const progressEl = document.getElementById('progress');
+const resultEl = document.getElementById('result');
+const quizContainer = document.getElementById('quiz-container');
+
+const optionLetters = ['A', 'B', 'C', 'D'];
+const optionColors = {
+A: '#D0E8FF',
+B: '#D4EDDA',
+C: '#FFE5B4',
+D: '#F8D7DA',
+};
+
+function loadQuestion() {
+clearTimeout(autoNextTimeout);
+answered = false;
+resultEl.innerText = '';
+answersEl.innerHTML = '';
+const currentData = quizData[currentQuestionIndex];
+questionEl.innerText = `Câu ${currentQuestionIndex + 1}: ${currentData.question}`;
+progressEl.innerText = `Câu ${currentQuestionIndex + 1} / ${quizData.length}`;
+
+currentData.answers.forEach((answer, index) => {
+    const letter = optionLetters[index];
+    const btn = document.createElement('div');
+    btn.classList.add('answer-option', `answer-${letter}`);
+    btn.style.backgroundColor = optionColors[letter];
+    btn.style.color = '#000000';
+    btn.innerHTML = `<span class="answer-label">${letter}</span> ${answer}`;
+    btn.tabIndex = 0;
+    btn.onclick = () => selectAnswer(btn, answer);
+    btn.onkeydown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        btn.click();
+    }
+    };
+    answersEl.appendChild(btn);
+});
+
+quizContainer.focus();
+}
+
+function selectAnswer(btn, answer) {
+if (answered) return;
+answered = true;
+
+const allOptions = document.querySelectorAll('.answer-option');
+allOptions.forEach(opt => opt.style.pointerEvents = 'none');
+
+const correctAnswer = quizData[currentQuestionIndex].correct;
+
+if (answer === correctAnswer) {
+    btn.classList.add('correct');
+    score++;
+} else {
+    btn.classList.add('wrong');
+    allOptions.forEach(opt => {
+    // opt.innerText.trim().substring(2) bỏ ký tự A/B/C/D và dấu cách
+    if (opt.innerText.trim().substring(2) === correctAnswer) {
+        opt.classList.add('correct');
+    }
+    });
+}
+
+resultEl.innerText = 'Nhấn Enter hoặc Space để sang câu tiếp theo...';
+
+autoNextTimeout = setTimeout(() => {
+    goToNextQuestion();
+}, 1000);
+}
+
+function goToNextQuestion() {
+clearTimeout(autoNextTimeout);
+if (currentQuestionIndex < quizData.length - 1) {
+    currentQuestionIndex++;
+    loadQuestion();
+} else {
+    showResult();
+}
+}
+
+function goToPreviousQuestion() {
+clearTimeout(autoNextTimeout);
+if (currentQuestionIndex > 0) {
+    currentQuestionIndex--;
+    loadQuestion();
+}
+}
+
+quizContainer.addEventListener('keydown', function(e) {
+if ((e.key === 'Enter' || e.key === ' ') && answered) {
+    e.preventDefault();
+    goToNextQuestion();
+} else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    goToNextQuestion();
+} else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    goToPreviousQuestion();
+}
+});
+
+function showResult() {
+questionEl.innerText = '';
+answersEl.innerHTML = '';
+progressEl.innerText = '';
+resultEl.innerText = `Bạn đã hoàn thành bài quiz! Điểm của bạn là ${score} / ${quizData.length}.`;
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
